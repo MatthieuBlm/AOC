@@ -30,7 +30,7 @@ public class DayController {
 	
 	@GetMapping("{dayNumber}/{partNumber}")
 	public ResponseEntity<String> resolve(@PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody String body) {
-		String resolverName = String.format("com.matthieu.aoc_2020.model.resolver.Resolver%s_%s", dayNumber, partNumber);
+		String resolverName = String.format("com.matthieu.aoc_2020.model.resolver.Resolver%sp%s", dayNumber, partNumber);
 		Class<?> resolverClass;
 		
 		// Get resolver class
