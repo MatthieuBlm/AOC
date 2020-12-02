@@ -6,7 +6,7 @@ public class Parsers {
 	
 	
 	public static Parser<Integer> toInt() {
-		return s -> Integer.parseInt(s);
+		return Integer::parseInt;
 	}
 	
 	public static Parser<Character> toChar() {
@@ -18,11 +18,11 @@ public class Parsers {
 	}
 	
 	public static Parser<Double> toDouble() {
-		return s -> Double.parseDouble(s);
+		return Double::parseDouble;
 	}
 	
 	public static Parser<Long> toLong() {
-		return s -> Long.parseLong(s);
+		return Long::parseLong;
 	}
 	
 }

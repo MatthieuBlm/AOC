@@ -1,10 +1,14 @@
 package com.matthieu.aoc_2020.service.resolver;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
 import com.matthieu.aoc_2020.model.Matrix;
+import com.matthieu.aoc_2020.model.Row;
+import com.matthieu.aoc_2020.service.parser.Parser;
+import com.matthieu.aoc_2020.service.parser.Parsers;
 
 public class Resolver2p1 implements Resolver {
 
@@ -19,25 +23,27 @@ public class Resolver2p1 implements Resolver {
 
 	@Override
 	public boolean solve() throws SolveException {
-		for (String [] row : data.getDatas()) {
-			String[] splitedLimit = row[0].split("-");
-			int a = Integer.parseInt(splitedLimit[0]);
-			int b = Integer.parseInt(splitedLimit[1]);
-			
-			char letter = row[1].charAt(0);
+		Parser<Integer[]> boundParser = s -> Arrays.asList(s.split("-")).stream()
+													.map(Parsers.toInt()::parse)
+													.toArray(Integer[]::new);
+		
+		for (Row row : this.data.getRows()) {
+			Integer[] bounds = row.get(0, boundParser);
+			char letter = row.get(1, s -> s.charAt(0));
 			
 			int frequency = 0;
 			
-			for (char c : row[2].toCharArray()) {
+			for(char c : row.get(2, String::toCharArray)) {
 				if(c == letter) {
 					frequency++;
 				}
 			}
 			
-			if(frequency >= a && frequency <= b) {
+			if(frequency >= bounds[0] && frequency <= bounds[1]) {
 				this.validPassword++;
 			}
 		}
+		
 		return true;
 	}
 

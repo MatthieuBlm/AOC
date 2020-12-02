@@ -1,6 +1,7 @@
 package com.matthieu.aoc_2020.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,11 +9,11 @@ import com.matthieu.aoc_2020.service.parser.Parser;
 
 public class Matrix {
 
-	private List<String[]> datas;
+	private List<Row> datas;
 	
 	
 	public Matrix(List<String> values) {
-		this.initDatas(values, " ");
+		this(values, " ");
 	}
 	
 	public Matrix(List<String> values, String separator) {
@@ -20,37 +21,26 @@ public class Matrix {
 	}
 	
 	
-	public String get(int x, int y) {
-		this.controlParams(x, y);
-		
-		return this.datas.get(y)[x];
-	}
-	
-	public <T> T get(Parser<T> parser, int x, int y) {
-		return parser.parse(this.get(x, y));
-	}
-	
-	
 	public void set(int x, int y, String value) {
 		this.controlParams(x, y);
 
-		this.datas.get(x)[y] = value;
+		this.datas.get(y).set(x, value);
 	}
 	
-	public List<String[]> getDatas() {
+	public List<Row> getRows() {
 		return this.datas;
 	}
 
-	public String[] getRow(int x) {
-		return this.datas.get(x);
+	public Row getRow(int y) {
+		return this.datas.get(y);
 	}
 	
 	public int getMaxY() {
-		return this.datas.get(0).length;
+		return this.datas.get(0).size() - 1;
 	}
 	
 	public int getMaxX() {
-		return this.datas.size();
+		return this.datas.size() - 1;
 	}
 	
 	public <T> List<T> getColumn(Parser<T> parser, int x) {
@@ -63,9 +53,17 @@ public class Matrix {
 		return result;
 	}
 	
+	public String get(int x, int y) {
+		this.controlParams(x, y);
+		
+		return this.datas.get(y).get(x);
+	}
+	
+	
 	private void initDatas(List<String> values, String separator) {
 		this.datas = values.stream()
-				.map(line -> line.split(separator))
+				.map(line -> Arrays.asList(line.split(separator)))
+				.map(Row::new)
 				.collect(Collectors.toList());
 	}
 	
@@ -76,8 +74,8 @@ public class Matrix {
 			throw new IllegalArgumentException("Given parameter y ("+ y +") is lower than 0");
 		} else if(y >= datas.size()) {
 			throw new IllegalArgumentException("Given parameter x ("+ y +") is greater than " + (datas.size() - 1));
-		} else if(x >= datas.get(y).length) {
-			throw new IllegalArgumentException("Given parameter y ("+ x +") is greater than " + (datas.get(y).length - 1));
+		} else if(x >= datas.get(y).size()) {
+			throw new IllegalArgumentException("Given parameter y ("+ x +") is greater than " + (datas.get(y).size() - 1));
 		}
 	}
 }
