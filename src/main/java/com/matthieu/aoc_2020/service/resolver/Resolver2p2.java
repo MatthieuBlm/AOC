@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.model.resolver;
+package com.matthieu.aoc_2020.service.resolver;
 
 import java.util.List;
 
@@ -21,19 +21,19 @@ public class Resolver2p2 implements Resolver {
 	public boolean solve() throws SolveException {
 		for (String [] row : data.getDatas()) {
 			String[] splitedLimit = row[0].split("-");
-			int a = Integer.parseInt(splitedLimit[0]);
-			int b = Integer.parseInt(splitedLimit[1]);
+			int a = Integer.parseInt(splitedLimit[0]) - 1;
+			int b = Integer.parseInt(splitedLimit[1]) - 1;
 			
 			char letter = row[1].charAt(0);
 			
-			boolean aTrue = (row[2].length() - 1) > (a + 1);
-			boolean bTrue = (row[2].length() - 1) > (b + 1);
+			boolean aTrue = (row[2].length() - 1) >= a;
+			boolean bTrue = (row[2].length() - 1) >= b;
 			
 			if(aTrue) {
-				aTrue = row[2].charAt(a + 1) == letter;
+				aTrue = Character.compare(row[2].charAt(a), letter) == 0;
 			}
 			if(bTrue) {
-				bTrue = row[2].charAt(b + 1) == letter;
+				bTrue = Character.compare(row[2].charAt(b), letter) == 0;
 			}
 			
 			if(aTrue ^ bTrue) {

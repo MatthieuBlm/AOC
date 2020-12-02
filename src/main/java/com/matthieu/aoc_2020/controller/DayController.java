@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.resolver.Resolver;
 import com.matthieu.aoc_2020.service.InputReader;
+import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 @RestController
 @RequestMapping("day")
@@ -30,8 +30,9 @@ public class DayController {
 	
 	@GetMapping("{dayNumber}/{partNumber}")
 	public ResponseEntity<String> resolve(@PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody String body) {
-		String resolverName = String.format("com.matthieu.aoc_2020.model.resolver.Resolver%sp%s", dayNumber, partNumber);
+		String resolverName = String.format("com.matthieu.aoc_2020.service.resolver.Resolver%sp%s", dayNumber, partNumber);
 		Class<?> resolverClass;
+		
 		
 		// Get resolver class
 		try {
@@ -41,6 +42,7 @@ public class DayController {
 			logger.error(message, e);
 			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 		}
+		
 		
 		// Create resolver instance
 		Resolver resolver;
@@ -53,7 +55,9 @@ public class DayController {
 			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
+		
 		// Prepare data
+		long startTime = System.currentTimeMillis();
 		try {
 			resolver.prepareData(this.inputReader.getInputAsStringArray(body));
 		} catch (PrepareDataException e) {
@@ -61,10 +65,13 @@ public class DayController {
 			logger.error(message, e);
 			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		long endTime = System.currentTimeMillis();
 		
-		logger.info("Data prepared for day {} part {}", dayNumber, partNumber);
+		logger.info("Data prepared for day {} part {} in {}ms", dayNumber, partNumber, (endTime - startTime));
+		
 		
 		// Solve problem
+		startTime = System.currentTimeMillis();
 		try {
 			while(!resolver.solve()) {
 				logger.info("Solve loop executed.");
@@ -74,10 +81,13 @@ public class DayController {
 			logger.error(message, e);
 			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		endTime = System.currentTimeMillis();
 		
-		logger.info("Problem solved for day {} part {}", dayNumber, partNumber);
+		logger.info("Problem solved for day {} part {} in {}ms", dayNumber, partNumber, (endTime - startTime));
+		
 		
 		// Send response
 		return ResponseEntity.ok(resolver.get());
 	}
+	
 }

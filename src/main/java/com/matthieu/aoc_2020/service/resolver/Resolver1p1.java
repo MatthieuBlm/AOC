@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.model.resolver;
+package com.matthieu.aoc_2020.service.resolver;
 
 import java.util.List;
 import java.util.stream.Collectors;

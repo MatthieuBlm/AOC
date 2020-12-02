@@ -1,7 +1,10 @@
 package com.matthieu.aoc_2020.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.matthieu.aoc_2020.service.parser.Parser;
 
 public class Matrix {
 
@@ -20,7 +23,11 @@ public class Matrix {
 	public String get(int x, int y) {
 		this.controlParams(x, y);
 		
-		return this.datas.get(x)[y];
+		return this.datas.get(y)[x];
+	}
+	
+	public <T> T get(Parser<T> parser, int x, int y) {
+		return parser.parse(this.get(x, y));
 	}
 	
 	
@@ -38,8 +45,22 @@ public class Matrix {
 		return this.datas.get(x);
 	}
 	
-	public int getRowSize(int x) {
-		return this.datas.get(x).length;
+	public int getMaxY() {
+		return this.datas.get(0).length;
+	}
+	
+	public int getMaxX() {
+		return this.datas.size();
+	}
+	
+	public <T> List<T> getColumn(Parser<T> parser, int x) {
+		List<T> result = new ArrayList<>();
+		
+		for (int y = 0; y < this.getMaxY() - 1; y++) {
+			result.add(parser.parse(this.get(x, y)));
+		}
+		
+		return result;
 	}
 	
 	private void initDatas(List<String> values, String separator) {
@@ -53,10 +74,10 @@ public class Matrix {
 			throw new IllegalArgumentException("Given parameter x ("+ x +") is lower than 0");
 		} else if(y < 0) {
 			throw new IllegalArgumentException("Given parameter y ("+ y +") is lower than 0");
-		} else if(x >= datas.size()) {
-			throw new IllegalArgumentException("Given parameter x ("+ x +") is greater than " + (datas.size() - 1));
-		} else if(y >= datas.get(x).length) {
-			throw new IllegalArgumentException("Given parameter y ("+ y +") is greater than " + (datas.get(x).length - 1));
+		} else if(y >= datas.size()) {
+			throw new IllegalArgumentException("Given parameter x ("+ y +") is greater than " + (datas.size() - 1));
+		} else if(x >= datas.get(y).length) {
+			throw new IllegalArgumentException("Given parameter y ("+ x +") is greater than " + (datas.get(y).length - 1));
 		}
 	}
 }

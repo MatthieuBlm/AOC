@@ -1,6 +1,5 @@
-package com.matthieu.aoc_2020.model.resolver;
+package com.matthieu.aoc_2020.service.resolver;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
