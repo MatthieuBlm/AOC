@@ -23,10 +23,19 @@ public class Matrix {
 		return this.datas.get(x)[y];
 	}
 	
+	
 	public void set(int x, int y, String value) {
 		this.controlParams(x, y);
 
 		this.datas.get(x)[y] = value;
+	}
+	
+	public List<String[]> getDatas() {
+		return this.datas;
+	}
+
+	public String[] getRow(int x) {
+		return this.datas.get(x);
 	}
 	
 	public int getRowSize(int x) {
