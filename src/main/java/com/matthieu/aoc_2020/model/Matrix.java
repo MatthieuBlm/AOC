@@ -35,11 +35,11 @@ public class Matrix {
 		return this.datas.get(y);
 	}
 	
-	public int getMaxY() {
+	public int getMaxX() {
 		return this.datas.get(0).size() - 1;
 	}
 	
-	public int getMaxX() {
+	public int getMaxY() {
 		return this.datas.size() - 1;
 	}
 	
@@ -61,10 +61,19 @@ public class Matrix {
 	
 	
 	private void initDatas(List<String> values, String separator) {
-		this.datas = values.stream()
-				.map(line -> Arrays.asList(line.split(separator)))
-				.map(Row::new)
-				.collect(Collectors.toList());
+		if(values.get(0).contains(separator)) {
+			this.datas = values.stream()
+					.map(line -> Arrays.asList(line.split(separator)))
+					.map(Row::new)
+					.collect(Collectors.toList());
+		} else {
+			this.datas = values.stream()
+					.map(line -> line.chars().mapToObj(c -> (char) c)
+												.map(String::valueOf)
+												.collect(Collectors.toList()))
+					.map(Row::new)
+					.collect(Collectors.toList());
+		}
 	}
 	
 	private void controlParams(int x, int y) {
@@ -77,5 +86,19 @@ public class Matrix {
 		} else if(x >= datas.get(y).size()) {
 			throw new IllegalArgumentException("Given parameter y ("+ x +") is greater than " + (datas.get(y).size() - 1));
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for (Row row : datas) {
+			for (String s : row.get()) {
+				sb.append(s);
+			}
+			sb.append("\n\r");
+		}
+		
+		return sb.toString();
 	}
 }

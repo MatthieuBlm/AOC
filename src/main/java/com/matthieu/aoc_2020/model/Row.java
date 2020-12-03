@@ -20,6 +20,10 @@ public class Row {
 		return this.value.size();
 	}
 	
+	public List<String> get() {
+		return this.value;
+	}
+	
 	public String get(int x) {
 		return this.value.get(x);
 	}
