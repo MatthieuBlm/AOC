@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.service;
+package com.matthieu.aoc_2020.service.validator;
 
 @FunctionalInterface
 public interface Validator {

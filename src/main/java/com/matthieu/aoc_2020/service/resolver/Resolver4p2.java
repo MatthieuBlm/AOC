@@ -1,23 +1,27 @@
 package com.matthieu.aoc_2020.service.resolver;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.service.Validator;
+import com.matthieu.aoc_2020.model.StringTuple;
+import com.matthieu.aoc_2020.service.validator.ValidatorSet;
 
 
 public class Resolver4p2 extends Resolver4p1 {
 
 	@Override
 	public boolean solve() throws SolveException {
-		List<String> eclPossibility = Arrays.asList("amb", "blu", "brn", "gry", "grn", "hzl", "oth");
+		ValidatorSet validators = new ValidatorSet();
 		
-		Validator byr = s -> s.length() == 4 && Integer.parseInt(s) >= 1920 && Integer.parseInt(s) <= 2002;
-		Validator iyr = s -> s.length() == 4 && Integer.parseInt(s) >= 2010 && Integer.parseInt(s) <= 2020;
-		Validator eyr = s -> s.length() == 4 && Integer.parseInt(s) >= 2020 && Integer.parseInt(s) <= 2030;
-		Validator hgt = s -> {
+		validators.put("cid", s -> true);
+		validators.put("byr", s -> s.length() == 4 && Integer.parseInt(s) >= 1920 && Integer.parseInt(s) <= 2002);
+		validators.put("iyr", s -> s.length() == 4 && Integer.parseInt(s) >= 2010 && Integer.parseInt(s) <= 2020);
+		validators.put("eyr", s -> s.length() == 4 && Integer.parseInt(s) >= 2020 && Integer.parseInt(s) <= 2030);
+		validators.put("hcl", s -> s.matches("#[0-9a-f]{6}"));
+		validators.put("ecl", s -> s.matches("amb|blu|brn|gry|grn|hzl|oth"));
+		validators.put("pid", s -> s.length() == 9);
+		validators.put("hgt", s -> {
 			if(s.contains("cm")) {
 				int i = Integer.parseInt(s.split("cm")[0]);
 				
@@ -28,66 +32,22 @@ public class Resolver4p2 extends Resolver4p1 {
 				return i >= 59 && i <= 76;
 			}
 			return false;
-		};
-		Validator hcl = s -> s.matches("#[0-9a-f]{6}");
-		Validator ecl = s -> eclPossibility.contains(s);
-		Validator pid = s -> s.length() == 9;
+		});
 		
-		for (List<String[]> passport : data) {
-			boolean ok = true;
+
+		super.solve();
+		
+		
+		List<List<String[]>> passportWithAllFields = super.validPassport;
+		super.validPassport = new ArrayList<>();
+		
+		for (List<String[]> passport : passportWithAllFields) {
 			
-			for (String field : this.requiredFileds) {
-				ok &= passport.stream().anyMatch(entry -> entry[0].equalsIgnoreCase(field));
-			}
-			
-			if(ok) {
-				for (String[] field : passport) {
-					
-					if(ok) {
-						Validator v = null;
-						switch(field[0]) {
-						case "byr":
-							v= byr;
-							break;
-						case "iyr":
-							v= iyr;
-							break;
-						case "eyr":
-							v= eyr;
-							break;
-						case "hgt":
-							v= hgt;
-							break;
-						case "hcl":
-							v= hcl;
-							break;
-						case "ecl":
-							v= ecl;
-							break;
-						case "pid":
-							v= pid;
-							break;
-						case "cid":
-							continue;
-						default: 
-							ok = false;
-							continue;
-						}
-						
-						ok &= v.validate(field[1]);
-					}
-				}
-			}
-			
-			if(ok) {
-				this.validPassport++;
+			if(passport.stream().map(StringTuple::new).allMatch(validators::validate)) {
+				super.validPassport.add(passport);
 			}
 		}
 		
 		return true;
-	}
-	
-	public static void main(String[]s) {
-		System.out.println("#6f89ab".matches("^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"));
 	}
 }

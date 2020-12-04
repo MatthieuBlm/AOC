@@ -15,14 +15,14 @@ public class Resolver4p1 implements Resolver {
 
 	protected List<List<String[]>> data;
 	protected List<String> requiredFileds;
-	protected int validPassport;
+	protected List<List<String[]>> validPassport;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
 		Parser<String[]> entryParser = s -> s.split(":");
 		this.requiredFileds = Arrays.asList("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid");
-		this.validPassport = 0;
 		
+		this.validPassport = new ArrayList<>();
 		this.data = new ArrayList<>();
 		
 		List<String[]> passport = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Resolver4p1 implements Resolver {
 			}
 			
 			if(ok) {
-				this.validPassport++;
+				validPassport.add(passport);
 			}
 		}
 		
@@ -60,7 +60,7 @@ public class Resolver4p1 implements Resolver {
 
 	@Override
 	public String get() {
-		return String.valueOf(this.validPassport);
+		return String.valueOf(this.validPassport.size());
 	}
 
 }
