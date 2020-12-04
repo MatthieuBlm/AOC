@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.matthieu.aoc_2020.model.Tuple;
+import com.matthieu.aoc_2020.model.tuple.Tuple;
 
 public class ValidatorSet {
 

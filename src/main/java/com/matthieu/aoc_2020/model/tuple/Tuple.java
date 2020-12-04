@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.model;
+package com.matthieu.aoc_2020.model.tuple;
 
 import java.util.Map.Entry;
 

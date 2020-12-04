@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.model;
+package com.matthieu.aoc_2020.model.tuple;
 
 public class StringTuple extends Tuple<String, String> {
 

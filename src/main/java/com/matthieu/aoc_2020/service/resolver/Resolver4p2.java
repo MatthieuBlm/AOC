@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.StringTuple;
+import com.matthieu.aoc_2020.model.tuple.StringTuple;
 import com.matthieu.aoc_2020.service.validator.ValidatorSet;
 
 
