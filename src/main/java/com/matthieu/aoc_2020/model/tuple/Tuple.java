@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 
 public class Tuple<K, V> implements Entry<K, V> {
 
+
 	private K key;
 	private V value;
 	
@@ -30,4 +31,8 @@ public class Tuple<K, V> implements Entry<K, V> {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return "[" + key + ", " + value + "]";
+	}
 }
