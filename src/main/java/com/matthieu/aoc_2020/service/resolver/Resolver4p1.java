@@ -9,48 +9,46 @@ import org.apache.logging.log4j.util.Strings;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
+import com.matthieu.aoc_2020.model.tuple.StringTuple;
 import com.matthieu.aoc_2020.service.parser.Parser;
 
 public class Resolver4p1 implements Resolver {
 
-	protected List<List<String[]>> data;
 	protected List<String> requiredFileds;
-	protected List<List<String[]>> validPassport;
+	protected List<List<StringTuple>> allPassports;
+	protected List<List<StringTuple>> validPassport;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
-		Parser<String[]> entryParser = s -> s.split(":");
+		Parser<StringTuple> entryParser = s -> new StringTuple(s.split(":"));
 		this.requiredFileds = Arrays.asList("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid");
 		
 		this.validPassport = new ArrayList<>();
-		this.data = new ArrayList<>();
+		this.allPassports = new ArrayList<>();
 		
-		List<String[]> passport = new ArrayList<>();
-		this.data.add(passport);
+		List<StringTuple> passport = new ArrayList<>();
+		this.allPassports.add(passport);
 		for (String line : values) {
 
 			if(Strings.isBlank(line)) {
 				passport = new ArrayList<>();
-				data.add(passport);
+				allPassports.add(passport);
 			} else {
 				passport.addAll(
 						Arrays.asList(line.split(" ")).stream()
-						.map(entryParser::parse)
-						.collect(Collectors.toList()));
+							.map(entryParser::parse)
+							.collect(Collectors.toList()));
 			}
 		}
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
-		for (List<String[]> passport : data) {
-			boolean ok = true;
+		for (List<StringTuple> passport : allPassports) {
 			
-			for (String field : this.requiredFileds) {
-				ok &= passport.stream().anyMatch(entry -> entry[0].equalsIgnoreCase(field));
-			}
+			List<String> fieldsPresent = passport.stream().map(StringTuple::getKey).collect(Collectors.toList());
 			
-			if(ok) {
+			if(requiredFileds.stream().allMatch(fieldsPresent::contains)) {
 				validPassport.add(passport);
 			}
 		}

@@ -1,10 +1,8 @@
 package com.matthieu.aoc_2020.service.resolver;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.tuple.StringTuple;
 import com.matthieu.aoc_2020.service.validator.ValidatorSet;
 
 
@@ -21,32 +19,15 @@ public class Resolver4p2 extends Resolver4p1 {
 		validators.put("hcl", s -> s.matches("#[0-9a-f]{6}"));
 		validators.put("ecl", s -> s.matches("amb|blu|brn|gry|grn|hzl|oth"));
 		validators.put("pid", s -> s.length() == 9);
-		validators.put("hgt", s -> {
-			if(s.contains("cm")) {
-				int i = Integer.parseInt(s.split("cm")[0]);
-				
-				return i >= 150 && i <= 193;
-			} else if(s.contains("in")) {
-				int i = Integer.parseInt(s.split("in")[0]);
-				
-				return i >= 59 && i <= 76;
-			}
-			return false;
-		});
-		
+		validators.put("cm", s -> Integer.parseInt(s) >= 150 && Integer.parseInt(s) <= 193);
+		validators.put("in", s -> Integer.parseInt(s) >= 59 && Integer.parseInt(s) <= 76);
+		validators.put("hgt", s -> s.matches("[0-9]*cm|[0-9]*in") && validators.validate(s.substring(s.length() - 2), s.substring(0, s.length() - 2)));
 
 		super.solve();
 		
-		
-		List<List<String[]>> passportWithAllFields = super.validPassport;
-		super.validPassport = new ArrayList<>();
-		
-		for (List<String[]> passport : passportWithAllFields) {
-			
-			if(passport.stream().map(StringTuple::new).allMatch(validators::validate)) {
-				super.validPassport.add(passport);
-			}
-		}
+		super.validPassport = super.validPassport.stream()
+										.filter(pass -> pass.stream().allMatch(validators::validate))
+										.collect(Collectors.toList());
 		
 		return true;
 	}

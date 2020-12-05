@@ -15,6 +15,16 @@ public class ValidatorSet {
 		this.validators = new HashMap<>();
 	}
 	
+	public Validator get(String key) {
+		if(this.exists(key)) {
+			return this.validators.get(key);
+		}
+		throw new IllegalArgumentException("No validator found for key " + key);
+	}
+	
+	public boolean exists(String key) {
+		return this.validators.get(key) != null;
+	}
 	
 	public void put(String key, Validator validator) {
 		this.validators.put(key, validator);
@@ -25,7 +35,7 @@ public class ValidatorSet {
 	}
 	
 	public boolean validate(String key, String value) {
-		return this.validators.get(key).validate(value);
+		return this.get(key).validate(value);
 	}
 	
 	public boolean validate(Tuple<String, String> values) {
@@ -33,8 +43,9 @@ public class ValidatorSet {
 	}
 	
 	public boolean validate(String key, String... values) {
+		Validator validator = this.get(key);
 		return Arrays.asList(values).stream()
-					.allMatch(validators.get(key)::validate);
+					.allMatch(validator::validate);
 	}
 	
 	public boolean validate(List<Tuple<String, String>> values) {
