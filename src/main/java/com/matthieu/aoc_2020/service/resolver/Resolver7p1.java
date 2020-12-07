@@ -36,6 +36,7 @@ public class Resolver7p1 implements Resolver {
 			List<BagRule> toExplore = new ArrayList<>();
 			toExplore.add(bagRule);
 			
+			outerloop:
 			while(!toExplore.isEmpty()) {
 				toExplore = toExplore.stream()
 								.map(bag -> bag.getContent().keySet())
@@ -47,6 +48,7 @@ public class Resolver7p1 implements Resolver {
 				for (BagRule rule : toExplore) {
 					if(rule.getColor().equals(searchingColor) && !this.canContainSearchingColorBag.contains(rule.getColor())) {
 						this.canContainSearchingColorBag.add(bagRule.getColor());
+						break outerloop;
 					}
 				}
 				
