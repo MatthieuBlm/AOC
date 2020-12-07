@@ -1,12 +1,14 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
+import com.matthieu.aoc_2020.service.resolver.Resolver;
 
-public class Resolver1p2 implements Resolver {
+public class Resolver1p1 implements Resolver {
+
 	private List<Integer> datas;
 	private int result;
 	
@@ -19,11 +21,9 @@ public class Resolver1p2 implements Resolver {
 	public boolean solve() throws SolveException {
 		for (Integer a : datas) {
 			for (Integer b : datas) {
-				for (Integer c : datas) {
-					if(a + b + c== 2020) {
-						result = a * b * c;
-						return true;
-					}
+				if(a + b == 2020) {
+					result = a * b;
+					return true;
 				}
 			}
 		}

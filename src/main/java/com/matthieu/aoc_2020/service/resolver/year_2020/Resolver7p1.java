@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.travel_bag.BagRule;
+import com.matthieu.aoc_2020.model.BagRule;
+import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 public class Resolver7p1 implements Resolver {
 

@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.model.travel_bag;
+package com.matthieu.aoc_2020.model;
 
 import java.util.HashMap;
 import java.util.Map;

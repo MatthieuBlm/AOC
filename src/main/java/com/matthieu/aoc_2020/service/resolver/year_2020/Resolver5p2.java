@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.List;
 import java.util.Map.Entry;

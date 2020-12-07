@@ -1,9 +1,9 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.Map;
 
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.travel_bag.BagRule;
+import com.matthieu.aoc_2020.model.BagRule;
 
 public class Resolver7p2 extends Resolver7p1 {
 

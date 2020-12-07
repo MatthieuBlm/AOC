@@ -28,9 +28,9 @@ public class DayController {
 	private InputReader inputReader;
 	
 	
-	@GetMapping("{dayNumber}/{partNumber}")
-	public ResponseEntity<String> resolve(@PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody String body) {
-		String resolverName = String.format("com.matthieu.aoc_2020.service.resolver.Resolver%sp%s", dayNumber, partNumber);
+	@GetMapping("{year}/{dayNumber}/{partNumber}")
+	public ResponseEntity<String> resolve(@PathVariable int year, @PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody String body) {
+		String resolverName = String.format("com.matthieu.aoc_2020.service.resolver.year_%s.Resolver%sp%s", year, dayNumber, partNumber);
 		Class<?> resolverClass;
 		
 		

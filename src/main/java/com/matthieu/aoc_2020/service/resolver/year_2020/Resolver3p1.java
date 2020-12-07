@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
 import com.matthieu.aoc_2020.model.Matrix;
 import com.matthieu.aoc_2020.model.Point;
+import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 public class Resolver3p1 implements Resolver {
 

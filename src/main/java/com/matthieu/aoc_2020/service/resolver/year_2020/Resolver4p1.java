@@ -1,4 +1,4 @@
-package com.matthieu.aoc_2020.service.resolver;
+package com.matthieu.aoc_2020.service.resolver.year_2020;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +11,7 @@ import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
 import com.matthieu.aoc_2020.model.tuple.StringTuple;
 import com.matthieu.aoc_2020.service.parser.Parser;
+import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 public class Resolver4p1 implements Resolver {
 
