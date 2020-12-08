@@ -73,9 +73,7 @@ public class DayController {
 		// Solve problem
 		startTime = System.currentTimeMillis();
 		try {
-			while(!resolver.solve()) {
-				logger.info("Solve loop executed.");
-			}
+			resolver.solve();
 		} catch (SolveException e) {
 			String message = "An error occurred during solving problem";
 			logger.error(message, e);

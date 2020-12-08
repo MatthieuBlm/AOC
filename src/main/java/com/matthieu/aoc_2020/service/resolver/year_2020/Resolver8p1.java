@@ -11,24 +11,24 @@ import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 public class Resolver8p1 implements Resolver {
 
-	private List<Instruction> instructions;
-	private int accumulator;
+	protected List<Instruction> instructions;
+	protected int accumulator;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
 		Parser<Instruction> parser = s -> new Instruction(s.split(" ")[0], Integer.parseInt(s.split(" ")[1]));
 
-		this.accumulator = 0;
 		this.instructions = values.stream().map(parser::parse).collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
 		int pointer = 0;
+		this.accumulator = 0;
 		
 		List<Boolean> stepExecuted = this.instructions.stream().map(i -> Boolean.FALSE).collect(Collectors.toList());
 		
-		while(Boolean.FALSE.equals(stepExecuted.get(pointer))) {
+		while(pointer < this.instructions.size() && Boolean.FALSE.equals(stepExecuted.get(pointer))) {
 			Instruction i = this.instructions.get(pointer);
 
 			stepExecuted.set(pointer, Boolean.TRUE);
@@ -45,7 +45,7 @@ public class Resolver8p1 implements Resolver {
 		}
 		
 		
-		return true;
+		return pointer >= this.instructions.size();
 	}
 
 	@Override
