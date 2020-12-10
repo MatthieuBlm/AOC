@@ -10,6 +10,7 @@ import com.matthieu.aoc_2020.service.resolver.Resolver;
 public class Resolver10p1 implements Resolver {
 
 	protected List<Integer> adapters;
+	protected Long result;
 	private Integer currentJoltage;
 	private Integer oneJolts;
 	private Integer threeJolts;
@@ -21,6 +22,9 @@ public class Resolver10p1 implements Resolver {
 						.map(Integer::valueOf)
 						.sorted((i1, i2) -> i1.compareTo(i2))
 						.collect(Collectors.toList());
+		
+		adapters.add(0, 0);
+		adapters.add(adapters.get(adapters.size() - 1) + 3);
 		
 		this.currentJoltage = 0;
 		this.oneJolts = 0;
@@ -41,10 +45,9 @@ public class Resolver10p1 implements Resolver {
 			
 			currentJoltage = adapter;
 		}
-		
-		// built-in adapter
-		threeJolts++;
 
+		result = (long) (oneJolts * threeJolts);
+		
 		return true;
 	}
 

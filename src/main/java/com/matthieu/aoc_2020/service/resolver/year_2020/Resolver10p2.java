@@ -7,50 +7,28 @@ import com.matthieu.aoc_2020.exception.SolveException;
 
 public class Resolver10p2 extends Resolver10p1 {
 
-	private Long result;
-	
 	@Override
 	public boolean solve() throws SolveException {
 		List<Integer> possibilities = new ArrayList<>();
-		result = 0L;
-		
-		// Add device
-		adapters.add(0, 0);
-		adapters.add(adapters.get(adapters.size() - 1) + 3);
-
-		int consecutif = 1;
+		int sequence = 1;
 		
 		// For each adapter
-		for (int i = 0; i < super.adapters.size() - 1; i += consecutif - 1) {
-			Integer adapter = adapters.get(i);
-			consecutif = 1;
+		for (int i = 0; i < super.adapters.size() - 1; i += sequence - 1) {
+			sequence = 1;
 			
-			Integer a = (i + 1) < adapters.size() ? adapters.get(i + 1) : null;
-			Integer b = (i + 2) < adapters.size() ? adapters.get(i + 2) : null;
-			Integer c = (i + 3) < adapters.size() ? adapters.get(i + 3) : null;
-			Integer d = (i + 4) < adapters.size() ? adapters.get(i + 4) : null;
+			for (int j = 1; j < 5 && (j + i) < adapters.size(); j++)
+				sequence += adapters.get(i + j) == adapters.get(i) + j ? 1 : 0;
 			
-			if(a != null && a == adapter + 1)
-				consecutif++;
-			if(b != null && b == adapter + 2)
-				consecutif++;
-			if(c != null && c == adapter + 3)
-				consecutif++;
-			if(d != null && d == adapter + 4)
-				consecutif++;
-			
-			if(consecutif == 3) {
+			if(sequence == 3)
 				possibilities.add(2);
-			} else if(consecutif == 4) {
+			else if(sequence == 4)
 				possibilities.add(4);
-			}else if(consecutif == 5) {
+			else if(sequence == 5)
 				possibilities.add(7);
-			} else {
+			else
 				i++;
-			}
 			
 		}
-		
 		result = possibilities.stream().mapToLong(i -> i).reduce(1, (a, b) -> a * b);
 		
 		return true;
