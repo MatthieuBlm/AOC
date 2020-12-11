@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.matthieu.aoc_2020.exception.PrepareDataException;
 import com.matthieu.aoc_2020.exception.SolveException;
-import com.matthieu.aoc_2020.model.Matrix;
 import com.matthieu.aoc_2020.model.Point;
+import com.matthieu.aoc_2020.model.matrix.Matrix;
 import com.matthieu.aoc_2020.service.resolver.Resolver;
 
 public class Resolver3p1 implements Resolver {
 
-	private Matrix m;
+	private Matrix<String> m;
 	private int a;
 	private int b;
 	private Point pos;
@@ -18,7 +18,7 @@ public class Resolver3p1 implements Resolver {
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
-		this.m = new Matrix(values);
+		this.m = new Matrix<>(values, s -> s);
 		this.a = 3;
 		this.b = 1;
 	}

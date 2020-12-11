@@ -19,6 +19,10 @@ public class Tuple<K, V> implements Entry<K, V> {
 	public K getKey() {
 		return this.key;
 	}
+	
+	public void setKey(K key) {
+		this.key = key;
+	}
 
 	@Override
 	public V getValue() {
