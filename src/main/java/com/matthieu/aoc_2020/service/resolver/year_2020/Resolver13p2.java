@@ -15,6 +15,7 @@ public class Resolver13p2 implements Resolver {
 
 	protected List<Tuple<Long, Long>> buses;
 	private long earliestTimestamp;
+	private int greaterBusIndex;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
@@ -28,39 +29,65 @@ public class Resolver13p2 implements Resolver {
 								.collect(Collectors.toList());
 		
 		this.earliestTimestamp = 0L;
+		
+		// Search for greater bus ID
+		int greaterBusID = 0;
+		for (int j = 0; j < buses.size(); j++) {
+			if(buses.get(j).getKey() > greaterBusID) {
+				greaterBusID = buses.get(j).getKey().intValue();
+				this.greaterBusIndex = j;
+			}
+		}
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
 		long [] currentTime = new long[buses.size()];
-		long firstBusId = buses.get(0).getKey();
+		long greaterBusId = buses.get(greaterBusIndex).getKey();
 		
 		while (earliestTimestamp == 0L) {
 			
-			for (int i = 1; i < currentTime.length; i++) {
+			for (int i = greaterBusIndex; i < currentTime.length; i++) {
 				
-				// While current time is lower/equals than previsou time + bus's line index
+				// While current time is lower/equals than previous time + bus's line index
 				while(currentTime[i] < (currentTime[i - 1] + (buses.get(i).getValue() - buses.get(i - 1).getValue()))) {
 					currentTime[i] += buses.get(i).getKey();
 				}
 			}
 			
-			boolean timestampFound = true;
-			for (int i = 0; i < currentTime.length - 1; i++) {
+			boolean leftBusesOk = true;
+			for (int i = greaterBusIndex; i < currentTime.length - 1; i++) {
 				if(currentTime[i] != currentTime[i + 1] - (buses.get(i + 1).getValue() - buses.get(i).getValue())) {
-					timestampFound = false;
+					leftBusesOk = false;
 					break;
 				}
 			}
 			
-			if(timestampFound) {
-				earliestTimestamp = currentTime[0];
-			} else {
-				currentTime[0] += firstBusId;
+			if(leftBusesOk) {
+				// Setup 'right buses'
+				for (int i = greaterBusIndex; i > 0; i--) {
+					while(currentTime[i - 1] < (currentTime[i] - (buses.get(i).getValue() - buses.get(i - 1).getValue()))) {
+						currentTime[i - 1] += buses.get(i - 1).getKey();
+					}
+				}
+				
+				boolean allBusesOk = true;
+				for (int i = 0; i < currentTime.length - 1; i++) {
+					if(currentTime[i] != currentTime[i + 1] - (buses.get(i + 1).getValue() - buses.get(i).getValue())) {
+						allBusesOk = false;
+						break;
+					}
+				}
+				
+				if(allBusesOk) {
+					earliestTimestamp = currentTime[0];
+				}
 			}
+
+			currentTime[greaterBusIndex] += greaterBusId;
 			
-			if(currentTime[0] % 1000000000000L == 0L) {
-				System.out.println(System.currentTimeMillis() + ": " + currentTime[0]);
+			if(currentTime[this.greaterBusIndex] % 1000000000000L == 0L) {
+				System.out.println(System.currentTimeMillis() + ": " + currentTime[this.greaterBusIndex]);
 			}
 		}
 		
@@ -71,5 +98,4 @@ public class Resolver13p2 implements Resolver {
 	public String get() {
 		return String.valueOf(this.earliestTimestamp);
 	}
-
 }
