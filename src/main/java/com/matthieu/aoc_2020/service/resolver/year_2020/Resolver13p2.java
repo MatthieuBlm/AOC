@@ -15,7 +15,6 @@ public class Resolver13p2 implements Resolver {
 
 	protected List<Tuple<Long, Long>> buses;
 	private long earliestTimestamp;
-	private int greaterBusIndex;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
@@ -29,71 +28,59 @@ public class Resolver13p2 implements Resolver {
 								.collect(Collectors.toList());
 		
 		this.earliestTimestamp = 0L;
-		
-		// Search for greater bus ID
-		int greaterBusID = 0;
-		for (int j = 0; j < buses.size(); j++) {
-			if(buses.get(j).getKey() > greaterBusID) {
-				greaterBusID = buses.get(j).getKey().intValue();
-				this.greaterBusIndex = j;
-			}
-		}
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
-		long [] currentTime = new long[buses.size()];
-		long greaterBusId = buses.get(greaterBusIndex).getKey();
+		long M = this.buses.stream().map(b -> b.getKey()).reduce(1L, (a, b) -> a * b);
+		long[] ai = this.buses.stream().mapToLong(b -> (b.getKey() - b.getValue()) % b.getKey()).toArray();
+		long[] Mi = this.buses.stream().mapToLong(b -> M / b.getKey()).toArray();
+		long[] yi = IntStream.range(0, Mi.length).mapToLong(i -> invertEuclide(Mi[i], this.buses.get(i).getKey())).toArray();
 		
-		while (earliestTimestamp == 0L) {
-			
-			for (int i = greaterBusIndex; i < currentTime.length; i++) {
-				
-				// While current time is lower/equals than previous time + bus's line index
-				while(currentTime[i] < (currentTime[i - 1] + (buses.get(i).getValue() - buses.get(i - 1).getValue()))) {
-					currentTime[i] += buses.get(i).getKey();
-				}
-			}
-			
-			boolean leftBusesOk = true;
-			for (int i = greaterBusIndex; i < currentTime.length - 1; i++) {
-				if(currentTime[i] != currentTime[i + 1] - (buses.get(i + 1).getValue() - buses.get(i).getValue())) {
-					leftBusesOk = false;
-					break;
-				}
-			}
-			
-			if(leftBusesOk) {
-				// Setup 'right buses'
-				for (int i = greaterBusIndex; i > 0; i--) {
-					while(currentTime[i - 1] < (currentTime[i] - (buses.get(i).getValue() - buses.get(i - 1).getValue()))) {
-						currentTime[i - 1] += buses.get(i - 1).getKey();
-					}
-				}
-				
-				boolean allBusesOk = true;
-				for (int i = 0; i < currentTime.length - 1; i++) {
-					if(currentTime[i] != currentTime[i + 1] - (buses.get(i + 1).getValue() - buses.get(i).getValue())) {
-						allBusesOk = false;
-						break;
-					}
-				}
-				
-				if(allBusesOk) {
-					earliestTimestamp = currentTime[0];
-				}
-			}
-
-			currentTime[greaterBusIndex] += greaterBusId;
-			
-			if(currentTime[this.greaterBusIndex] % 1000000000000L == 0L) {
-				System.out.println(System.currentTimeMillis() + ": " + currentTime[this.greaterBusIndex]);
-			}
+		for (int j = 0; j < yi.length; j++) {
+			earliestTimestamp += ai[j] * Mi[j] * yi[j];
 		}
+		
+		earliestTimestamp %= M;
 		
 		return true;
 	}
+	
+	private long invertEuclide(long b, long n) {
 
+		while (b < 0) {
+			b = b + n;
+		}
+		
+		long n0 = n;
+		long b0 = b;
+		long t0 = 0;
+		long t = 1;
+		long q = (long) Math.floor(n0 / b0);
+		long r = n0 - q * b0;
+		
+		while (r > 0) {
+			long temp = t0 - q * t;
+			if (temp >= 0) {
+				temp=temp % n;
+			} else {
+				temp = n - (-temp % n);
+			}
+			t0 = t;
+			t = temp;
+			n0 = b0;
+			b0 = r;
+			q = (long) Math.floor(n0 / b0);
+			r = n0 - q * b0;
+		}
+		
+		if (b0 != 1) {
+			System.err.println(b + " n'a pas d'inverse modulo " + n); 
+		}
+		
+		return t;
+	}
+	
 	@Override
 	public String get() {
 		return String.valueOf(this.earliestTimestamp);
