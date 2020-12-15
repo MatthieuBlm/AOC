@@ -47,7 +47,7 @@ public class Resolver4p1 implements Resolver {
 	public boolean solve() throws SolveException {
 		for (List<StringTuple> passport : allPassports) {
 			
-			List<String> fieldsPresent = passport.stream().map(StringTuple::getKey).collect(Collectors.toList());
+			List<String> fieldsPresent = passport.stream().map(StringTuple::a).collect(Collectors.toList());
 			
 			if(requiredFileds.stream().allMatch(fieldsPresent::contains)) {
 				validPassport.add(passport);

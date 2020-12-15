@@ -8,11 +8,11 @@ import java.util.stream.IntStream;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
-import com.matthieu.aoc.model.tuple.Tuple;
+import com.matthieu.aoc.model.tuple.Duo;
 
 public class Resolver15p2 extends Resolver15p1 {
 
-	private TreeMap<Integer, Tuple<Integer, Integer[]>> datas;	// [Number, [frequency, 2 lastTurnNumber]]
+	private TreeMap<Integer, Duo<Integer, Integer[]>> datas;	// [Number, [frequency, 2 lastTurnNumber]]
 	private int lastNumber;
 	private int currentTurnIndex;
 	
@@ -26,7 +26,7 @@ public class Resolver15p2 extends Resolver15p1 {
 		this.resultTurn = 30000000;
 		
 		IntStream.range(0, super.numbers.size())
-			.forEach(n -> datas.put(numbers.get(n), new Tuple<>(1, new Integer[]{n+1, n+1})));
+			.forEach(n -> datas.put(numbers.get(n), new Duo<>(1, new Integer[]{n+1, n+1})));
 	}
 
 	@Override
@@ -46,12 +46,12 @@ public class Resolver15p2 extends Resolver15p1 {
 
 	@Override
 	protected void makeTurn() {
-		Tuple<Integer, Integer[]> lastNumberInfo = this.datas.get(this.lastNumber);
+		Duo<Integer, Integer[]> lastNumberInfo = this.datas.get(this.lastNumber);
 		
-		if(lastNumberInfo.getKey() == 1) {
+		if(lastNumberInfo.a() == 1) {
 			this.addNumberOrIncrementFrequency(0);
 		} else {
-			Integer newNumber = lastNumberInfo.getValue()[0] - lastNumberInfo.getValue()[1];
+			Integer newNumber = lastNumberInfo.b()[0] - lastNumberInfo.b()[1];
 			
 			this.addNumberOrIncrementFrequency(newNumber);
 		}
@@ -60,15 +60,15 @@ public class Resolver15p2 extends Resolver15p1 {
 	}
 	
 	private void addNumberOrIncrementFrequency(int number) {
-		Optional<Tuple<Integer, Integer[]>> newNumberInfo = Optional.ofNullable(this.datas.get(number));
+		Optional<Duo<Integer, Integer[]>> newNumberInfo = Optional.ofNullable(this.datas.get(number));
 		
 		if(newNumberInfo.isPresent()) {
-			Tuple<Integer, Integer[]> info = newNumberInfo.get();
+			Duo<Integer, Integer[]> info = newNumberInfo.get();
 			
-			info.setKey(info.getKey() + 1);
-			shift(currentTurnIndex, info.getValue());
+			info.a(info.a() + 1);
+			shift(currentTurnIndex, info.b());
 		} else {
-			datas.put(number, new Tuple<>(1, new Integer[]{currentTurnIndex, 0}));
+			datas.put(number, new Duo<>(1, new Integer[]{currentTurnIndex, 0}));
 		}
 
 		this.lastNumber = number;
@@ -85,13 +85,13 @@ public class Resolver15p2 extends Resolver15p1 {
 	private String datasToString() {
 		StringBuilder sb = new StringBuilder();
 		
-		for (Map.Entry<Integer, Tuple<Integer, Integer[]>> entry : datas.entrySet()) {
+		for (Map.Entry<Integer, Duo<Integer, Integer[]>> entry : datas.entrySet()) {
 			sb.append(entry.getKey());
 			sb.append("=[");
-			sb.append(entry.getValue().getKey());
+			sb.append(entry.getValue().a());
 			sb.append(", [");
 			
-			for (Integer i : entry.getValue().getValue()) {
+			for (Integer i : entry.getValue().b()) {
 				sb.append(i);
 				sb.append(", ");
 			}

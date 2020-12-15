@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
-import com.matthieu.aoc.model.tuple.Tuple;
+import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver5p1 implements Resolver {
@@ -23,18 +23,18 @@ public class Resolver5p1 implements Resolver {
 	public boolean solve() throws SolveException {
 		
 		for (String seat : datas) {
-			Tuple<Integer, Integer> row = new Tuple<>(0, 127);
+			Duo<Integer, Integer> row = new Duo<>(0, 127);
 			
 			for (int i = 0; i < 7; i++) {
 				row = this.getPart(seat.charAt(i), row);
 			}
 			
-			Tuple<Integer, Integer> column = new Tuple<>(0, 8);
+			Duo<Integer, Integer> column = new Duo<>(0, 8);
 			for (int i = 7; i < 10; i++) {
 				column = this.getPart(seat.charAt(i), column);
 			}
 			
-			this.seats.put(row.getKey() * 8 + column.getKey(), seat);
+			this.seats.put(row.a() * 8 + column.a(), seat);
 		}
 		
 		return true;
@@ -45,16 +45,16 @@ public class Resolver5p1 implements Resolver {
 		return String.valueOf(this.seats.descendingMap().entrySet().iterator().next().getKey());
 	}
 
-	protected Tuple<Integer, Integer> getPart(char letter, Tuple<Integer, Integer> intervalle) {
-		Tuple<Integer, Integer> res;
+	protected Duo<Integer, Integer> getPart(char letter, Duo<Integer, Integer> intervalle) {
+		Duo<Integer, Integer> res;
 		
-		int range = intervalle.getValue() - intervalle.getKey();
+		int range = intervalle.b() - intervalle.a();
 		int increment = (int) Math.ceil(range / 2d);
 		
 		if(letter == 'F' || letter == 'L') {
-			res = new Tuple<>(intervalle.getKey(), intervalle.getValue() - increment);
+			res = new Duo<>(intervalle.a(), intervalle.b() - increment);
 		} else if(letter == 'B' || letter == 'R') {
-			res = new Tuple<>(intervalle.getKey() + increment, intervalle.getValue());
+			res = new Duo<>(intervalle.a() + increment, intervalle.b());
 		} else {
 			throw new IllegalArgumentException("Unknown letter " + letter);
 		}

@@ -8,12 +8,12 @@ import java.util.stream.IntStream;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
-import com.matthieu.aoc.model.tuple.Tuple;
+import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver13p2 implements Resolver {
 
-	protected List<Tuple<Long, Long>> buses;
+	protected List<Duo<Long, Long>> buses;
 	private long earliestTimestamp;
 	
 	@Override
@@ -23,7 +23,7 @@ public class Resolver13p2 implements Resolver {
 		
 		// [Key: Bus id, Value: Bus's line index] 
 		this.buses = IntStream.range(0, splittedBus.size())
-								.mapToObj(i -> splittedBus.get(i).equals("x") ? null : new Tuple<>(Long.parseLong(splittedBus.get(i)), Long.valueOf(i)))
+								.mapToObj(i -> splittedBus.get(i).equals("x") ? null : new Duo<>(Long.parseLong(splittedBus.get(i)), Long.valueOf(i)))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList());
 		
@@ -32,10 +32,10 @@ public class Resolver13p2 implements Resolver {
 
 	@Override
 	public boolean solve() throws SolveException {
-		long M = this.buses.stream().map(b -> b.getKey()).reduce(1L, (a, b) -> a * b);
-		long[] ai = this.buses.stream().mapToLong(b -> (b.getKey() - b.getValue()) % b.getKey()).toArray();
-		long[] Mi = this.buses.stream().mapToLong(b -> M / b.getKey()).toArray();
-		long[] yi = IntStream.range(0, Mi.length).mapToLong(i -> invertEuclide(Mi[i], this.buses.get(i).getKey())).toArray();
+		long M = this.buses.stream().map(b -> b.a()).reduce(1L, (a, b) -> a * b);
+		long[] ai = this.buses.stream().mapToLong(b -> (b.a() - b.b()) % b.a()).toArray();
+		long[] Mi = this.buses.stream().mapToLong(b -> M / b.a()).toArray();
+		long[] yi = IntStream.range(0, Mi.length).mapToLong(i -> invertEuclide(Mi[i], this.buses.get(i).a())).toArray();
 		
 		for (int j = 0; j < yi.length; j++) {
 			earliestTimestamp += ai[j] * Mi[j] * yi[j];

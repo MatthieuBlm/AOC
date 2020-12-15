@@ -1,9 +1,9 @@
 package com.matthieu.aoc.model.tuple;
 
-public class StringTuple extends Tuple<String, String> {
+public class StringTuple extends Duo<String, String> {
 
-	public StringTuple(String key, String value) {
-		super(key, value);
+	public StringTuple(String a, String b) {
+		super(a, b);
 	}
 
 	public StringTuple(String[] values) {

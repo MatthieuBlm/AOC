@@ -1,9 +1,9 @@
 package com.matthieu.aoc.model.tuple;
 
-public class IntTuple extends Tuple<Integer, Integer> {
+public class IntTuple extends Duo<Integer, Integer> {
 
-	public IntTuple(Integer key, Integer value) {
-		super(key, value);
+	public IntTuple(Integer a, Integer b) {
+		super(a, b);
 	}
 	
 	public IntTuple(Integer[] values) {

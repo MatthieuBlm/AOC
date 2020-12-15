@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.matthieu.aoc.exception.PrepareDataException;
-import com.matthieu.aoc.model.tuple.Tuple;
+import com.matthieu.aoc.model.tuple.Duo;
 
 public class Resolver11p2 extends Resolver11p1 {
 
@@ -17,18 +17,18 @@ public class Resolver11p2 extends Resolver11p1 {
 
 	@Override
 	protected long getNeightbourCount(int x, int y) {
-		List<Tuple<Integer, Integer>> vectors = Arrays.asList(
-													new Tuple<>(-1, -1), new Tuple<>(0, -1), new Tuple<>(1, -1),
-											        new Tuple<>(-1, 0), 					 new Tuple<>(1, 0), 
-											        new Tuple<>(-1, 1), new Tuple<>(0, 1),  new Tuple<>(1, 1));
+		List<Duo<Integer, Integer>> vectors = Arrays.asList(
+													new Duo<>(-1, -1), new Duo<>(0, -1), new Duo<>(1, -1),
+											        new Duo<>(-1, 0), 					 new Duo<>(1, 0), 
+											        new Duo<>(-1, 1), new Duo<>(0, 1),  new Duo<>(1, 1));
 		long result = 0;
 		
-		for (Tuple<Integer, Integer> v : vectors) {
-			Tuple<Integer, Integer> pos = new Tuple<>(x + v.getKey(), y + v.getValue());
+		for (Duo<Integer, Integer> v : vectors) {
+			Duo<Integer, Integer> pos = new Duo<>(x + v.a(), y + v.b());
 			
 			loop:
-			while(pos.getKey() >= 0 && pos.getValue() >= 0 && pos.getKey() <= seats.getMaxX() && pos.getValue() <= seats.getMaxY()) {
-				switch (seats.get(pos.getKey(), pos.getValue()).getState()) {
+			while(pos.a() >= 0 && pos.b() >= 0 && pos.a() <= seats.getMaxX() && pos.b() <= seats.getMaxY()) {
+				switch (seats.get(pos.a(), pos.b()).getState()) {
 				case OCCUPIED:
 					result++;
 				case EMPTY:
@@ -37,8 +37,8 @@ public class Resolver11p2 extends Resolver11p1 {
 					break;
 				}
 				
-				pos.setKey(pos.getKey() + v.getKey());
-				pos.setValue(pos.getValue() + v.getValue());
+				pos.a(pos.a() + v.a());
+				pos.b(pos.b() + v.b());
 			}
 		}
 		

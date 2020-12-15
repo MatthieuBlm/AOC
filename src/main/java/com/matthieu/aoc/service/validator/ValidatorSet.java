@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.matthieu.aoc.model.tuple.Tuple;
+import com.matthieu.aoc.model.tuple.Duo;
 
 public class ValidatorSet {
 
@@ -38,8 +38,8 @@ public class ValidatorSet {
 		return this.get(key).validate(value);
 	}
 	
-	public boolean validate(Tuple<String, String> values) {
-		return this.validate(values.getKey(), values.getValue());
+	public boolean validate(Duo<String, String> values) {
+		return this.validate(values.a(), values.b());
 	}
 	
 	public boolean validate(String key, String... values) {
@@ -48,7 +48,7 @@ public class ValidatorSet {
 					.allMatch(validator::validate);
 	}
 	
-	public boolean validate(List<Tuple<String, String>> values) {
+	public boolean validate(List<Duo<String, String>> values) {
 		return values.stream()
 					.map(this::validate)
 					.allMatch(b -> b);
