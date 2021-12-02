@@ -21,6 +21,9 @@ public class Resolver2p2 extends Resolver2p1 {
 				break;
 			case "up":
 				this.aim -= duo.b();
+				break;
+			default:
+				logger.error("Unknown command");
 			}
 		}
 		

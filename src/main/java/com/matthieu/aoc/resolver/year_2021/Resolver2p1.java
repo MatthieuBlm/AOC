@@ -3,6 +3,9 @@ package com.matthieu.aoc.resolver.year_2021;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
 import com.matthieu.aoc.model.tuple.Duo;
@@ -11,6 +14,8 @@ import com.matthieu.aoc.service.parser.Parser;
 
 public class Resolver2p1 implements Resolver {
 
+	protected static final Logger logger = LoggerFactory.getLogger(Resolver2p1.class);
+	
 	protected List<Duo<String, Integer>> instructions;
 	protected int horizontal;
 	protected int depth;
@@ -38,6 +43,9 @@ public class Resolver2p1 implements Resolver {
 				break;
 			case "up":
 				this.depth -= duo.b();
+				break;
+			default:
+				logger.error("Unknown command");
 			}
 			
 		}
