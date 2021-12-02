@@ -1,29 +1,53 @@
 package com.matthieu.aoc.resolver.year_2021;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
+import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.resolver.Resolver;
+import com.matthieu.aoc.service.parser.Parser;
 
 public class Resolver2p1 implements Resolver {
 
+	protected List<Duo<String, Integer>> instructions;
+	protected int horizontal;
+	protected int depth;
+	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
-		// TODO Auto-generated method stub
-
+		Parser<Duo<String, Integer>> toDuo = s -> {
+			String [] split = s.split(" ");
+			return new Duo<String, Integer>(split[0], Integer.parseInt(split[1]));
+		};
+		
+		this.instructions = values.stream().map(toDuo::parse).collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
-		// TODO Auto-generated method stub
-		return false;
+		
+		for (Duo<String, Integer> duo : instructions) {
+			switch(duo.a()) {
+			case "forward":
+				this.horizontal += duo.b();
+				break;
+			case "down":
+				this.depth += duo.b();
+				break;
+			case "up":
+				this.depth -= duo.b();
+			}
+			
+		}
+		
+		return true;
 	}
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
-		return null;
+		return String.valueOf(this.horizontal * this.depth);
 	}
 
 }
