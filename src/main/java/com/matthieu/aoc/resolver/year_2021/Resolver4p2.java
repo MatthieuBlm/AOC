@@ -1,8 +1,6 @@
 package com.matthieu.aoc.resolver.year_2021;
 
 import com.matthieu.aoc.exception.SolveException;
-import com.matthieu.aoc.model.matrix.Matrix;
-import com.matthieu.aoc.model.tuple.Duo;
 
 public class Resolver4p2 extends Resolver4p1 {
 
@@ -11,9 +9,7 @@ public class Resolver4p2 extends Resolver4p1 {
 		
 		for (Integer n : this.toMark) {
 			// Mark current number
-			for (Matrix<Duo<Integer, Boolean>> board : boards) {
-				this.markNumber(board, n);
-			}
+			boards.stream().forEach(board -> this.markNumber(board, n));
 			
 			// Remove winning boards (until last)
 			for (int i = 0; i < boards.size(); i++) {

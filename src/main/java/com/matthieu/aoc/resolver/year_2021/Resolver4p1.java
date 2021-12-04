@@ -3,6 +3,7 @@ package com.matthieu.aoc.resolver.year_2021;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.util.ObjectUtils;
@@ -39,7 +40,7 @@ public class Resolver4p1 implements Resolver {
 			
 			if(ObjectUtils.isEmpty(line)) {
 				if(dataForNewMatrix != null) {
-					this.boards.add(this.buildMatrix(dataForNewMatrix, this.matrixParser));
+					this.boards.add(new Matrix<>(dataForNewMatrix, this.matrixParser));
 				}
 				
 				dataForNewMatrix = new ArrayList<>();
@@ -53,9 +54,7 @@ public class Resolver4p1 implements Resolver {
 	@Override
 	public boolean solve() throws SolveException {
 		for (Integer n : this.toMark) {
-			for (Matrix<Duo<Integer, Boolean>> board : boards) {
-				this.markNumber(board, n);
-			}
+			boards.stream().forEach(board -> this.markNumber(board, n));
 			
 			for (Matrix<Duo<Integer, Boolean>> board : boards) {
 				if(this.isWinningBoard(board)) {
@@ -65,7 +64,6 @@ public class Resolver4p1 implements Resolver {
 				}
 			}
 		}
-		
 		
 		return false;
 	}
@@ -77,61 +75,23 @@ public class Resolver4p1 implements Resolver {
 	
 	
 	protected void markNumber(Matrix<Duo<Integer, Boolean>> matrix, int n) {
-		for (Row<Duo<Integer, Boolean>> row : matrix.getRows()) {
-			for (Duo<Integer, Boolean> cell : row.get()) {
-				if(cell.a().equals(n))
-					cell.b(true);
-			}
-		}
+		matrix.stream()
+				.filter(cell -> cell.a() == n)
+				.forEach(cell -> cell.b(true));
 	}
 	
 	protected int sumUnmarks(Matrix<Duo<Integer, Boolean>> board) {
-		int sum = 0;
-
-		for (Row<Duo<Integer, Boolean>> row : board.getRows()) {
-			for (Duo<Integer, Boolean> cell : row.get()) {
-				if(Boolean.FALSE.equals(cell.b()))
-					sum += cell.a();
-			}
-		}
-		
-		return sum;
-		
+		return board.stream()
+					.filter(Predicate.not(Duo::b))
+					.mapToInt(Duo::a).sum();
 	}
 	
 	protected boolean isWinningBoard(Matrix<Duo<Integer, Boolean>> matrix) {
-		for (Row<Duo<Integer, Boolean>> row : matrix.getRows()) {
-			if(this.isWinningRow(row))
-				return true;
-		}
-		
-		for (Row<Duo<Integer, Boolean>> column : matrix.getColumns()) {
-			if(this.isWinningColumn(column))
-				return true;
-		}
-		
-		return false;
+		return matrix.getRows().stream().anyMatch(this::isWinningRow) || 
+				matrix.getColumns().stream().anyMatch(this::isWinningRow);
 	}
 	
 	protected boolean isWinningRow(Row<Duo<Integer, Boolean>> row) {
-		for (Duo<Integer, Boolean> cell : row.get()) {
-			if(Boolean.FALSE.equals(cell.b()))
-				return false;
-		}
-		
-		return true;
-	}
-	
-	protected boolean isWinningColumn(Row<Duo<Integer, Boolean>> column) {
-		for (Duo<Integer, Boolean> cell : column.get()) {
-			if(Boolean.FALSE.equals(cell.b()))
-				return false;
-		}
-		
-		return true;
-	}
-	
-	protected Matrix<Duo<Integer, Boolean>> buildMatrix(List<String> data, Parser<Duo<Integer, Boolean>> parser) {
-		return new Matrix<>(data, parser);
+		return row.stream().allMatch(Duo::b);
 	}
 }
