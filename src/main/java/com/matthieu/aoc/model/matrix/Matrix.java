@@ -3,6 +3,7 @@ package com.matthieu.aoc.model.matrix;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,6 +65,22 @@ public class Matrix<T> {
 		return this.datas;
 	}
 	
+	public List<Row<T>> getColumns() {
+		List<Row<T>> columns = new ArrayList<>();
+		
+		for (int x = 0; x <= this.getMaxX(); x++) {
+			List<T> column = new ArrayList<>();
+			
+			for (Row<T> t : this.getRows()) {
+				column.add(t.get(x));
+			}
+			
+			columns.add(new Row<>(column));
+		}
+		
+		return columns;
+	}
+	
 	public List<T> neightbours(int x, int y) {
 		List<T> result = new ArrayList<>();
 		
@@ -76,7 +93,7 @@ public class Matrix<T> {
 		result.add(this.getQuietly(x, y+1));
 		result.add(this.getQuietly(x+1, y+1));
 		
-		return result.stream().filter(e -> e != null).collect(Collectors.toList());
+		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	public T getQuietly(int x, int y) {
