@@ -50,11 +50,19 @@ public class Matrix<T> {
 	}
 
 	public int getMaxX() {
-		return this.datas.get(0).size() - 1;
+		return this.getXSize() - 1;
 	}
 	
 	public int getMaxY() {
-		return this.datas.size() - 1;
+		return this.getYSize() - 1;
+	}
+	
+	public int getXSize() {
+		return this.datas.get(0).size();
+	}
+	
+	public int getYSize() {
+		return this.datas.size();
 	}
 
 	public Row<T> getRow(int y) {
@@ -68,7 +76,7 @@ public class Matrix<T> {
 	public List<Row<T>> getColumns() {
 		List<Row<T>> columns = new ArrayList<>();
 		
-		for (int x = 0; x <= this.getMaxX(); x++) {
+		for (int x = 0; x < this.getXSize(); x++) {
 			List<T> column = new ArrayList<>();
 			
 			for (Row<T> t : this.getRows()) {
@@ -120,7 +128,7 @@ public class Matrix<T> {
 	
 	public Stream<T> stream() {
 		return this.datas.stream()
-				.map(row -> row.get())
+				.map(Row::get)
 				.flatMap(List::stream);
 	}
 	

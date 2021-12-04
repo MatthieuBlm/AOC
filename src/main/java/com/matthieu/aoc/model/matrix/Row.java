@@ -1,6 +1,7 @@
 package com.matthieu.aoc.model.matrix;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.matthieu.aoc.service.parser.Parser;
 
@@ -30,5 +31,9 @@ public class Row<T> {
 	
 	public void set(int x, T value) {
 		this.value.set(x, value);
+	}
+	
+	public Stream<T> stream() {
+		return this.value.stream();
 	}
 }
