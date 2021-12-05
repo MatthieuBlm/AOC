@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +35,14 @@ public class Matrix<T> {
 												.collect(Collectors.toList()))
 					.map(Row<T>::new)
 					.collect(Collectors.toList());
+		}
+	}
+	
+	public Matrix(int width, int height, Supplier<T> defaultValueGetter) {
+		this.datas = new ArrayList<>(height);
+		
+		for (int i = 0; i < height; i++) {
+			this.datas.add(new Row<>(width, defaultValueGetter));
 		}
 	}
 	

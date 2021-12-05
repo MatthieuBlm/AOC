@@ -1,6 +1,8 @@
 package com.matthieu.aoc.model.matrix;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.matthieu.aoc.service.parser.Parser;
@@ -11,6 +13,14 @@ public class Row<T> {
 	
 	public Row(List<T> value) {
 		this.value = value;
+	}
+	
+	public Row(int lenght, Supplier<T> defaultValueGetter) {
+		this.value = new ArrayList<>(lenght);
+		
+		for (int i = 0; i < lenght; i++) {
+			this.value.add(defaultValueGetter.get());
+		}
 	}
 	
 	public <K> K get(int x, Parser<K> parser) {
