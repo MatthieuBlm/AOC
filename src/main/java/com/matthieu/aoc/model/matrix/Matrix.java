@@ -112,6 +112,17 @@ public class Matrix<T> {
 		
 		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
+
+	public List<T> neightboursCross(int x, int y) {
+		List<T> result = new ArrayList<>();
+		
+		result.add(this.getQuietly(x, y-1));
+		result.add(this.getQuietly(x-1, y));
+		result.add(this.getQuietly(x+1, y));
+		result.add(this.getQuietly(x, y+1));
+		
+		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
+	}
 	
 	public T getQuietly(int x, int y) {
 		try {
