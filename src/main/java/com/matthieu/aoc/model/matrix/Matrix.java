@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.service.parser.Parser;
 
 public class Matrix<T> {
@@ -150,6 +151,43 @@ public class Matrix<T> {
 		return this.datas.stream()
 				.map(Row::get)
 				.flatMap(List::stream);
+	}
+	
+	public void forEach(MatrixIterator<T> iterator) {
+		for (int y = 0; y < this.getYSize(); y++) {
+			for (int x = 0; x < this.getXSize(); x++) {
+				
+				T value = this.getQuietly(x, y);
+				
+				if(value != null)
+					iterator.iterate(x, y, value);
+			}
+		}
+	}
+
+	public void forEachNeigthbours(int x, int y, MatrixIterator<T> iterator) {
+		for (int yi = y - 1; yi <= y + 1; yi++) {
+			for (int xi = x - 1; xi <= x + 1; xi++) {
+				T value = this.getQuietly(xi, yi);
+				
+				if(value != null  && !(x == xi && y == yi)) {
+					iterator.iterate(xi, yi, value);
+				}
+			}
+		}
+	}
+	
+	public void forEachNeigthboursCross(int x, int y, MatrixIterator<T> iterator) {
+		List<Duo<Integer, Integer>> coords = Arrays.asList(new Duo<>(x - 1, y), 
+															new Duo<>(x + 1, y), 
+															new Duo<>(x, y - 1), 
+															new Duo<>(x, y + 1));
+		for (Duo<Integer, Integer> coord : coords) {
+			T value = this.getQuietly(coord.a(), coord.b());
+			
+			if(value != null)
+				iterator.iterate(coord.a(), coord.b(), value);
+		}
 	}
 	
 	@Override
