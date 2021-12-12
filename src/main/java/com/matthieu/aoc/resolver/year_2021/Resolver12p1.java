@@ -42,14 +42,10 @@ public class Resolver12p1 implements Resolver{
 
 	@Override
 	public String get() {
-		this.paths = paths.stream()
-							.filter(p -> p.get(p.size() - 1).equals("end"))
-							.collect(Collectors.toList());
-		
-		paths.stream()
-				.map(p -> p.stream().collect(Collectors.joining(",")))
-				.sorted()
-				.forEach(System.out::println);
+//		paths.stream()
+//				.map(p -> p.stream().collect(Collectors.joining(",")))
+//				.sorted()
+//				.forEach(System.out::println);
 		
 		return String.valueOf(this.paths.size());
 	}
@@ -89,6 +85,9 @@ public class Resolver12p1 implements Resolver{
 	
 	protected void addThisCave(String cave, List<String> path) {
 		if((this.isSmallCave(cave) && path.stream().anyMatch(s -> s.equals(cave)))) {
+			if(!path.get(path.size() - 1).equals("end")) {
+				this.paths.remove(path);
+			}
 			return;
 		}
 
