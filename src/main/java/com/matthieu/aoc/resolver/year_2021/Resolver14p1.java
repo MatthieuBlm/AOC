@@ -15,7 +15,7 @@ import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver14p1 implements Resolver {
-
+	
 	protected List<Character> polymer;
 	protected Map<String, Character> rules;
 	protected int steps;
@@ -43,20 +43,7 @@ public class Resolver14p1 implements Resolver {
 	public boolean solve() throws SolveException {
 		
 		for (int i = 0; i < this.steps; i++) {
-			List<Duo<Integer, Character>> toInsert = new ArrayList<>();
-			
-			for (int j = this.polymer.size() - 1; j > 0 ; j--) {
-				String key = Character.toString(this.polymer.get(j - 1)) + Character.toString(this.polymer.get(j));
-				Character newChar = this.rules.get(key);
-				
-				if(newChar != null) {
-					toInsert.add(new Duo<>(j, newChar));
-				}
-			}
-			
-			for (Duo<Integer, Character> duo : toInsert) {
-				this.polymer.add(duo.a(), duo.b());
-			}
+			this.calcOneStep();
 		}
 		
 		return true;
@@ -70,8 +57,25 @@ public class Resolver14p1 implements Resolver {
 		
 		int leastCommon = Collections.min(frequency);
 		int mostCommon = Collections.max(frequency);
-		
+
 		return String.valueOf(mostCommon - leastCommon);
+	}
+	
+	protected void calcOneStep() {
+		List<Duo<Integer, Character>> toInsert = new ArrayList<>();
+		
+		for (int j = this.polymer.size() - 1; j > 0 ; j--) {
+			String key = Character.toString(this.polymer.get(j - 1)) + Character.toString(this.polymer.get(j));
+			Character newChar = this.rules.get(key);
+			
+			if(newChar != null) {
+				toInsert.add(new Duo<>(j, newChar));
+			}
+		}
+		
+		for (Duo<Integer, Character> duo : toInsert) {
+			this.polymer.add(duo.a(), duo.b());
+		}
 	}
 
 }
