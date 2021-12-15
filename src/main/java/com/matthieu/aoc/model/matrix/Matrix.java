@@ -80,6 +80,16 @@ public class Matrix<T> {
 		return this.datas.get(y);
 	}
 
+	public Row<T> getColumn(int x) {
+		List<T> column = new ArrayList<>();
+		
+		for (int y = 0; y < this.getHeight(); y++) {
+			column.add(this.get(x, y));
+		}
+		
+		return new Row<>(column);
+	}
+
 	public List<Row<T>> getRows() {
 		return this.datas;
 	}
@@ -88,13 +98,7 @@ public class Matrix<T> {
 		List<Row<T>> columns = new ArrayList<>();
 		
 		for (int x = 0; x < this.getWidth(); x++) {
-			List<T> column = new ArrayList<>();
-			
-			for (Row<T> t : this.getRows()) {
-				column.add(t.get(x));
-			}
-			
-			columns.add(new Row<>(column));
+			columns.add(this.getColumn(x));
 		}
 		
 		return columns;
