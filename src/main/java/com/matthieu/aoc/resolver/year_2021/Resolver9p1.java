@@ -21,9 +21,9 @@ public class Resolver9p1 implements Resolver {
 	@Override
 	public boolean solve() throws SolveException {
 		
-		for (int y = 0; y < this.matrix.getYSize(); y++) {
-			for (int x = 0; x < this.matrix.getXSize(); x++) {
-				List<Integer> adjacent = this.matrix.neightboursCross(x, y);
+		for (int y = 0; y < this.matrix.getHeight(); y++) {
+			for (int x = 0; x < this.matrix.getWidth(); x++) {
+				List<Integer> adjacent = this.matrix.getNeightboursCross(x, y);
 				Integer current = this.matrix.get(x, y);
 				
 				if(this.isLowestPoint(current, adjacent)) {

@@ -26,7 +26,7 @@ public class Resolver13p2 extends Resolver13p1 {
 		Matrix<Character> folded = new Matrix<>(39, 6, () -> ' ');
 		
 		this.paper.forEach((int x, int y, Character c) -> {
-			if(x < folded.getXSize() && y < folded.getYSize() && c == '#') {
+			if(x < folded.getWidth() && y < folded.getHeight() && c == '#') {
 				folded.set(x, y, c);
 			}
 		});

@@ -16,24 +16,24 @@ public class Resolver15p2 extends Resolver15p1 {
 	public void prepareData(List<String> values) throws PrepareDataException {
 		Matrix<Long> r = new Matrix<>(values, Long::parseLong);
 		
-		this.risks = new Matrix<>(r.getXSize() * 5, r.getYSize() * 5, () -> 0l);
+		this.risks = new Matrix<>(r.getWidth() * 5, r.getHeight() * 5, () -> 0l);
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				for (int y = 0; y < r.getYSize(); y++) {
-					for (int x = 0; x < r.getXSize(); x++) {
+				for (int y = 0; y < r.getHeight(); y++) {
+					for (int x = 0; x < r.getWidth(); x++) {
 						long newRisk = r.get(x, y) + i + j;
 						
 						newRisk = newRisk % 10 + (newRisk / 10);
 						
-						risks.set(x + j * r.getXSize(), y + i * r.getYSize(), newRisk);
+						risks.set(x + j * r.getWidth(), y + i * r.getHeight(), newRisk);
 
 					}
 				}
 			}
 		}
 		
-		this.nodes = new Matrix<>(this.risks.getXSize(), this.risks.getYSize(), () -> new Node());
+		this.nodes = new Matrix<>(this.risks.getWidth(), this.risks.getHeight(), () -> new Node());
 		
 		nodes.forEach(this::linkNode);
 	}

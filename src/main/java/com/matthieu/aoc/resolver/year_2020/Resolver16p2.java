@@ -18,7 +18,7 @@ public class Resolver16p2 extends Resolver16p1 {
 		this.result = 1;
 		
 		// Filter invalid ticket
-		for (int y = this.nearbyTickets.getYSize() - 1; y >= 0 ; y--) {
+		for (int y = this.nearbyTickets.getHeight() - 1; y >= 0 ; y--) {
 			
 			if(this.isValidTicket(this.nearbyTickets.getRow(y))) {
 				this.nearbyTickets.removeRow(y);
@@ -34,7 +34,7 @@ public class Resolver16p2 extends Resolver16p1 {
 		List<Row<Integer>> columns = this.nearbyTickets.getColumns();
 		
 		
-		for (int x = 0; x < this.nearbyTickets.getXSize(); x++) {
+		for (int x = 0; x < this.nearbyTickets.getWidth(); x++) {
 			Row<Integer> column  = columns.get(x);
 			
 			for (TicketField field : this.ticketFields) {

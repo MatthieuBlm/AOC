@@ -56,7 +56,7 @@ public class Resolver11p1 implements Resolver {
 			this.haveFlashed.set(x, y, Boolean.TRUE);
 			this.flashNumber++;
 			
-			this.matrix.neightbours(x, y).forEach(I::increase);
+			this.matrix.getNeightbours(x, y).forEach(I::increase);
 			this.matrix.forEachNeigthbours(x, y, this::tryFlash);
 		}
 	}

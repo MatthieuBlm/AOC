@@ -62,7 +62,7 @@ public class Resolver11p1 implements Resolver {
 	}
 	
 	protected long getNeightbourCount(int x, int y) {
-		return seats.neightbours(x, y).stream().filter(s -> s.getState() == SeatState.OCCUPIED).count();
+		return seats.getNeightbours(x, y).stream().filter(s -> s.getState() == SeatState.OCCUPIED).count();
 	}
 	
 }

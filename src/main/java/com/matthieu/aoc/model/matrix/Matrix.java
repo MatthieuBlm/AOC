@@ -61,18 +61,18 @@ public class Matrix<T> {
 	}
 
 	public int getMaxX() {
-		return this.getXSize() - 1;
+		return this.getWidth() - 1;
 	}
 	
 	public int getMaxY() {
-		return this.getYSize() - 1;
+		return this.getHeight() - 1;
 	}
 	
-	public int getXSize() {
+	public int getWidth() {
 		return this.datas.get(0).size();
 	}
 	
-	public int getYSize() {
+	public int getHeight() {
 		return this.datas.size();
 	}
 
@@ -87,7 +87,7 @@ public class Matrix<T> {
 	public List<Row<T>> getColumns() {
 		List<Row<T>> columns = new ArrayList<>();
 		
-		for (int x = 0; x < this.getXSize(); x++) {
+		for (int x = 0; x < this.getWidth(); x++) {
 			List<T> column = new ArrayList<>();
 			
 			for (Row<T> t : this.getRows()) {
@@ -100,7 +100,7 @@ public class Matrix<T> {
 		return columns;
 	}
 	
-	public List<T> neightbours(int x, int y) {
+	public List<T> getNeightbours(int x, int y) {
 		List<T> result = new ArrayList<>();
 		
 		result.add(this.getQuietly(x-1, y-1));
@@ -115,7 +115,7 @@ public class Matrix<T> {
 		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	public List<T> neightboursCross(int x, int y) {
+	public List<T> getNeightboursCross(int x, int y) {
 		List<T> result = new ArrayList<>();
 		
 		result.add(this.getQuietly(x, y-1));
@@ -155,8 +155,8 @@ public class Matrix<T> {
 	}
 	
 	public void forEach(Consumer<T> consumer) {
-		for (int y = 0; y < this.getYSize(); y++) {
-			for (int x = 0; x < this.getXSize(); x++) {
+		for (int y = 0; y < this.getHeight(); y++) {
+			for (int x = 0; x < this.getWidth(); x++) {
 				
 				T value = this.getQuietly(x, y);
 				
@@ -167,8 +167,8 @@ public class Matrix<T> {
 	}
 	
 	public void forEach(MatrixIterator<T> iterator) {
-		for (int y = 0; y < this.getYSize(); y++) {
-			for (int x = 0; x < this.getXSize(); x++) {
+		for (int y = 0; y < this.getHeight(); y++) {
+			for (int x = 0; x < this.getWidth(); x++) {
 				
 				T value = this.getQuietly(x, y);
 				

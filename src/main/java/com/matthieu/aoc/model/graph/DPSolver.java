@@ -7,8 +7,8 @@ public class DPSolver {
 	private DPSolver() {}
 	
 	public static long calculateMinimumPath(Matrix<Long> cost) {
-		int width = cost.getXSize();
-		int height = cost.getYSize();
+		int width = cost.getWidth();
+		int height = cost.getHeight();
 		
         Matrix<Long> temporaryCost = new Matrix<>(width, height, () -> 0l);
 		
