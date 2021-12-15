@@ -101,29 +101,18 @@ public class Matrix<T> {
 	}
 	
 	public List<T> getNeightbours(int x, int y) {
-		List<T> result = new ArrayList<>();
-		
-		result.add(this.getQuietly(x-1, y-1));
-		result.add(this.getQuietly(x, y-1));
-		result.add(this.getQuietly(x+1, y-1));
-		result.add(this.getQuietly(x-1, y));
-		result.add(this.getQuietly(x+1, y));
-		result.add(this.getQuietly(x-1, y+1));
-		result.add(this.getQuietly(x, y+1));
-		result.add(this.getQuietly(x+1, y+1));
-		
-		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		return this.getValues(getNeigthboursCoords(x, y));
 	}
-
+	
 	public List<T> getNeightboursCross(int x, int y) {
-		List<T> result = new ArrayList<>();
-		
-		result.add(this.getQuietly(x, y-1));
-		result.add(this.getQuietly(x-1, y));
-		result.add(this.getQuietly(x+1, y));
-		result.add(this.getQuietly(x, y+1));
-		
-		return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		return this.getValues(getNeigthboursCrossCoords(x, y));
+	}
+	
+	public List<T> getValues(List<Duo<Integer, Integer>> coords) {
+		return coords.stream()
+						.map(c -> this.getQuietly(c.a(), c.b()))
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList());
 	}
 	
 	public T getQuietly(int x, int y) {
@@ -191,11 +180,7 @@ public class Matrix<T> {
 	}
 	
 	public void forEachNeigthboursCross(int x, int y, MatrixIterator<T> iterator) {
-		List<Duo<Integer, Integer>> coords = Arrays.asList(new Duo<>(x - 1, y), 
-															new Duo<>(x + 1, y), 
-															new Duo<>(x, y - 1), 
-															new Duo<>(x, y + 1));
-		for (Duo<Integer, Integer> coord : coords) {
+		for (Duo<Integer, Integer> coord : getNeigthboursCrossCoords(x, y)) {
 			T value = this.getQuietly(coord.a(), coord.b());
 			
 			if(value != null)
@@ -209,6 +194,24 @@ public class Matrix<T> {
 	
 	public void addRow(Row<T> row) {
 		this.datas.add(row);
+	}
+	
+	public static List<Duo<Integer, Integer>> getNeigthboursCoords(int x, int y) {
+		return Arrays.asList(new Duo<>(x-1, y-1), 
+							new Duo<>(x, y-1), 
+							new Duo<>(x+1, y-1), 
+							new Duo<>(x-1, y), 
+							new Duo<>(x+1, y), 
+							new Duo<>(x-1, y+1), 
+							new Duo<>(x, y+1), 
+							new Duo<>(x+1, y+1));
+	}
+	
+	public static List<Duo<Integer, Integer>> getNeigthboursCrossCoords(int x, int y) {
+		return Arrays.asList(new Duo<>(x-1, y), 
+							new Duo<>(x+1, y), 
+							new Duo<>(x, y-1), 
+							new Duo<>(x, y+1));
 	}
 	
 	@Override
