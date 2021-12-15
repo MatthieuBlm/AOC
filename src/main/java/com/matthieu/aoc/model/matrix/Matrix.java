@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -141,9 +142,9 @@ public class Matrix<T> {
 		} else if(y < 0) {
 			throw new IllegalArgumentException("Given parameter y ("+ y +") is lower than 0");
 		} else if(y >= datas.size()) {
-			throw new IllegalArgumentException("Given parameter x ("+ y +") is greater than " + (datas.size() - 1));
+			throw new IllegalArgumentException("Given parameter y ("+ y +") is greater than " + (datas.size() - 1));
 		} else if(x >= datas.get(y).size()) {
-			throw new IllegalArgumentException("Given parameter y ("+ x +") is greater than " + (datas.get(y).size() - 1));
+			throw new IllegalArgumentException("Given parameter x ("+ x +") is greater than " + (datas.get(y).size() - 1));
 		}
 	}
 	
@@ -151,6 +152,18 @@ public class Matrix<T> {
 		return this.datas.stream()
 				.map(Row::get)
 				.flatMap(List::stream);
+	}
+	
+	public void forEach(Consumer<T> consumer) {
+		for (int y = 0; y < this.getYSize(); y++) {
+			for (int x = 0; x < this.getXSize(); x++) {
+				
+				T value = this.getQuietly(x, y);
+				
+				if(value != null)
+					consumer.accept(value);
+			}
+		}
 	}
 	
 	public void forEach(MatrixIterator<T> iterator) {
@@ -188,6 +201,14 @@ public class Matrix<T> {
 			if(value != null)
 				iterator.iterate(coord.a(), coord.b(), value);
 		}
+	}
+	
+	public Row<T> removeRow(int y) {
+		return this.datas.remove(y);
+	}
+	
+	public void addRow(Row<T> row) {
+		this.datas.add(row);
 	}
 	
 	@Override
