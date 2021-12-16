@@ -1,8 +1,10 @@
-package com.matthieu.aoc.model.year_2021.bits;
+package com.matthieu.aoc.model.year_2021.bits.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.matthieu.aoc.model.year_2021.bits.Packet;
 
 public class LiteralPacket extends Packet {
 
@@ -25,6 +27,11 @@ public class LiteralPacket extends Packet {
 	
 	public long getValue() {
 		return Long.parseLong(this.data.stream().collect(Collectors.joining()), 2);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("[%s,%s] : %s", super.getVersion(), super.getTypeId(), this.getValue());
 	}
 
 }
