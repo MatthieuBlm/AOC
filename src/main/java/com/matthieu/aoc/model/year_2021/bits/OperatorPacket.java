@@ -39,7 +39,16 @@ public abstract class OperatorPacket extends Packet {
 	
 	@Override
 	public String toString() {
-		// TODO
-		return null;
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("[").append(super.getVersion()).append(",").append(super.getTypeId()).append("] : ");
+		builder.append("\n");
+		
+		for (Packet packet : subPackets) {
+			builder.append("    ").append(packet.toString());
+			builder.append("\n");
+		}
+		
+		return builder.toString();
 	}
 }

@@ -16,18 +16,34 @@ public class Duo<A, B> {
 		return this.a;
 	}
 	
+	public A x() {
+		return this.a();
+	}
+	
 	public Duo<A, B> a(A value) {
 		this.a = value;
 		return this;
+	}
+	
+	public Duo<A, B> x(A value) {
+		return this.a(value);
 	}
 
 	public B b() {
 		return this.b;
 	}
+	
+	public B y() {
+		return this.b();
+	}
 
 	public Duo<A, B> b(B value) {
 		this.b = value;
 		return this;
+	}
+
+	public Duo<A, B> y(B value) {
+		return this.b(value);
 	}
 
 

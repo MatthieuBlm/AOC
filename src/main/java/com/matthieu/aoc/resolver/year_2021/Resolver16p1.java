@@ -35,6 +35,8 @@ public class Resolver16p1 implements Resolver {
 
 	@Override
 	public String get() {
+		System.out.println(this.packets.get(0).toString());
+		
 		return String.valueOf(this.versionSum);
 	}
 
