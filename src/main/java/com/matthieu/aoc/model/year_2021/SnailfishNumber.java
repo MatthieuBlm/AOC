@@ -199,17 +199,6 @@ public class SnailfishNumber {
 		return Integer.parseInt(numberClone.toString());
 	}
 	
-	public static void main(String[] args) {
-		Pattern pattern = Pattern.compile(".[0-9]+\\,[0-9]+.");
-		Matcher matcher = pattern.matcher("[[[5,[2,8]],4],[5,[[9,9],0]]]");
-		
-		while(matcher.find()) {
-			System.out.println(matcher.start());
-			System.out.println(matcher.end());
-			System.out.println(matcher.group());
-		}
-	}
-	
 	@Override
 	public String toString() {
 		return this.number.toString();
