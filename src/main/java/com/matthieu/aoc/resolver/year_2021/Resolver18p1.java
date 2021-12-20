@@ -34,7 +34,7 @@ public class Resolver18p1 implements Resolver {
 			
 			this.snailfishNumber.reduce();
 		}
-		
+		System.out.println(this.snailfishNumber);
 		this.magnitude = this.snailfishNumber.getMagnitude();
 		
 		return true;
