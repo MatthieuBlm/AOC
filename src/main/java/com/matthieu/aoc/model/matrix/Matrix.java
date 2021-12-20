@@ -107,6 +107,10 @@ public class Matrix<T> {
 	public List<T> getNeightbours(int x, int y) {
 		return this.getValues(getNeigthboursCoords(x, y));
 	}
+
+	public List<T> getRegion(int x, int y) {
+		return this.getValues(getRegionCoords(x, y));
+	}
 	
 	public List<T> getNeightboursCross(int x, int y) {
 		return this.getValues(getNeigthboursCrossCoords(x, y));
@@ -209,6 +213,18 @@ public class Matrix<T> {
 							new Duo<>(x-1, y+1), 
 							new Duo<>(x, y+1), 
 							new Duo<>(x+1, y+1));
+	}
+
+	public static List<Duo<Integer, Integer>> getRegionCoords(int x, int y) {
+		return Arrays.asList(new Duo<>(x-1, y-1), 
+								new Duo<>(x, y-1), 
+								new Duo<>(x+1, y-1), 
+								new Duo<>(x-1, y),
+								new Duo<>(x, y),
+								new Duo<>(x+1, y), 
+								new Duo<>(x-1, y+1), 
+								new Duo<>(x, y+1), 
+								new Duo<>(x+1, y+1));
 	}
 	
 	public static List<Duo<Integer, Integer>> getNeigthboursCrossCoords(int x, int y) {

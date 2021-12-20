@@ -1,6 +1,7 @@
 package com.matthieu.aoc.resolver.year_2021;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
@@ -25,19 +26,31 @@ public class Resolver20p1 implements Resolver {
 
 	@Override
 	public boolean solve() throws SolveException {
-		// TODO Auto-generated method stub
-		return false;
+
+		this.image.forEach((x, y, v) -> {
+			
+		});
+		
+		return true;
 	}
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
-		return null;
+		return String.valueOf(this.image.stream().filter(c -> c == '#').count());
 	}
 	
+	
 	protected String getBinary(int x, int y) {
-		// TODO 
-		return null;
+		return this.image.getRegion(x, y).stream().map(c -> c == '#' ? "1" : "0").collect(Collectors.joining());
 	}
+	
+	protected Integer binaryToInteger(String binary) {
+		return Integer.parseInt(binary, 2);
+	}
+	
+	protected Character getAlgorithmeChar(int i) {
+		return this.enhancementAlgorithm.charAt(i);
+	}
+	
 
 }
