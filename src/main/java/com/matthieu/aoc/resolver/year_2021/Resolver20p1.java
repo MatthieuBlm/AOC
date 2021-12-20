@@ -3,12 +3,17 @@ package com.matthieu.aoc.resolver.year_2021;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
 import com.matthieu.aoc.model.matrix.Matrix;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver20p1 implements Resolver {
+
+	private static final Logger logger = LoggerFactory.getLogger(Resolver20p1.class);
 
 	protected Matrix<Character> image;
 	protected String enhancementAlgorithm;
@@ -23,29 +28,31 @@ public class Resolver20p1 implements Resolver {
 		
 		Matrix<Character> brutImage = new Matrix<>(values, s -> s.charAt(0));
 		
-		image = new Matrix<>(brutImage.getWidth() * 4, brutImage.getHeight() * 4, () -> '.');
+		image = new Matrix<>(brutImage.getWidth() * 10, brutImage.getHeight() * 10, () -> '.');
 		
-		int xShift = image.getWidth() / 4;
-		int yShift = image.getHeight() / 4;
+		int xShift = image.getWidth() / 2 - brutImage.getWidth() / 2;
+		int yShift = image.getHeight() / 2 - brutImage.getHeight() / 2;
 		brutImage.forEach((x, y, v) -> image.set(x + xShift, y + yShift, v));
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
-		System.out.println(this.image);
 		
 		for (int i = 0; i < this.enhancementStep; i++) {
 			
-			Matrix<Character> newImage = new Matrix<>(image.getWidth(), image.getHeight(), () -> null);
+			Matrix<Character> newImage = new Matrix<>(image.getWidth(), image.getHeight(), () -> '.');
 			
 			this.image.forEach((x, y, v) -> {
-				Character newC = getAlgorithmeChar(binaryToInteger(getBinary(x, y)));
-				
-				newImage.set(x, y, newC);
+				if(x > 1 && y > 1 && x < image.getMaxX() && y < image.getMaxY()) {
+					Character newC = getAlgorithmeChar(binaryToInteger(getBinary(x, y)));
+					
+					newImage.set(x, y, newC);
+				}
 			});
 			
 			this.image = newImage;
-			System.out.println(this.image);
+			
+			logger.info("Step {} calculated", i);
 		}
 		
 		return true;
@@ -53,7 +60,10 @@ public class Resolver20p1 implements Resolver {
 
 	@Override
 	public String get() {
-		return String.valueOf(this.image.stream().filter(c -> c == '#').count());
+		// Remove borders because glitches at the edge of the map appears.
+		Matrix<Character> subMatrix = this.image.submatrix(60, this.image.getWidth() - 60, 60, this.image.getHeight() - 60);
+
+		return String.valueOf(subMatrix.stream().filter(c -> c == '#').count());
 	}
 	
 	

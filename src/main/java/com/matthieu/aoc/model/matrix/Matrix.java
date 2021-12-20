@@ -204,6 +204,21 @@ public class Matrix<T> {
 		this.datas.add(row);
 	}
 	
+	public Matrix<T> submatrix(int x1, int x2, int y1, int y2) {
+		int width = x2 - x1 + 1;
+		int height = y2 - y1 + 1;
+		
+		Matrix<T> subMatrix = new Matrix<>(width, height, () -> null);
+		
+		for (int y = y1; y <= y2; y++) {
+			for (int x = x1; x <= x2; x++) {
+				subMatrix.set(x - x1, y - y1, this.get(x, y));
+			}
+		}
+		
+		return subMatrix;
+	}
+	
 	public static List<Duo<Integer, Integer>> getNeigthboursCoords(int x, int y) {
 		return Arrays.asList(new Duo<>(x-1, y-1), 
 							new Duo<>(x, y-1), 

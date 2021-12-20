@@ -214,4 +214,16 @@ public class MatrixTest {
 			assertEquals(matrix.get(x, y), s);
 		});
 	}
+	
+	@Test
+	public void getSubMatrixTest() {
+		Matrix<String> subMatrix = matrix.submatrix(1, 2, 0, 1);
+
+		assertEquals(2, subMatrix.getWidth());
+		assertEquals(2, subMatrix.getHeight());
+		assertEquals("World", subMatrix.get(0, 0));
+		assertEquals("!", subMatrix.get(1, 0));
+		assertEquals("bar", subMatrix.get(0, 1));
+		assertEquals("baz", subMatrix.get(1, 1));
+	}
 }
