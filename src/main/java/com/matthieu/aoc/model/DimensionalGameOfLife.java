@@ -59,6 +59,10 @@ public class DimensionalGameOfLife {
 		this.set(o, coords);
 	}
 	
+	public void makeDead(int...coords) {
+		this.set(null, coords);
+	}
+	
 	private void set(Object object, int...coords) {
 		Optional<Integer> index = this.getIndexByCoords(coords);
 
