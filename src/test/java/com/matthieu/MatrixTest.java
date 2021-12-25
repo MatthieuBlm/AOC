@@ -1,9 +1,9 @@
 package com.matthieu;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,11 +13,13 @@ import org.junit.Test;
 
 import com.matthieu.aoc.model.matrix.Matrix;
 import com.matthieu.aoc.model.matrix.Row;
+import com.matthieu.aoc.model.matrix.WrappedMatrix;
 
 public class MatrixTest {
 
 	private List<String> values;
 	private Matrix<String> matrix;
+	private WrappedMatrix<String> wMatrix;
 	
 	/**
 	 * Hello	World	!
@@ -29,6 +31,7 @@ public class MatrixTest {
 	public void initialize() {
 		values = Arrays.asList("Hello,World,!", "foo,bar,baz", "france,suisse,italy", "###,000,@@@");
 		matrix = new Matrix<>(values, s -> s, ","); 
+		wMatrix = new WrappedMatrix<>(values, s -> s, ",");
 	}
 	
 	@Test
@@ -225,5 +228,35 @@ public class MatrixTest {
 		assertEquals("!", subMatrix.get(1, 0));
 		assertEquals("bar", subMatrix.get(0, 1));
 		assertEquals("baz", subMatrix.get(1, 1));
+	}
+	
+	@Test
+	public void wrappedMatrixGetTest() {
+		assertEquals("World", wMatrix.get(1, 4));
+		assertEquals("italy", wMatrix.get(-1, 2));
+	}
+
+	@Test
+	public void wrappedMatrixGetBottomTest() {
+		assertEquals("World", wMatrix.getBottom(1, 3));
+	}
+	
+	@Test
+	public void wrappedMatrixGetRightTest() {
+		assertEquals("foo", wMatrix.getRight(2, 1));
+	}
+
+	@Test
+	public void wrappedMatrixSetBottomTest() {
+		wMatrix.setBottom(1, 3, "p");
+		
+		assertEquals("p", wMatrix.getBottom(1, 3));
+	}
+	
+	@Test
+	public void wrappedMatrixSetRightTest() {
+		wMatrix.setRight(2, 1, "r");
+		
+		assertEquals("r", wMatrix.getRight(2, 1));
 	}
 }

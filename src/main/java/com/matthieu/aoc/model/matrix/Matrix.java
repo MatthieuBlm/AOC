@@ -14,7 +14,7 @@ import com.matthieu.aoc.service.parser.Parser;
 
 public class Matrix<T> {
 
-	private List<Row<T>> datas;
+	protected List<Row<T>> datas;
 	
 	
 	public Matrix(List<String> values, Parser<T> parser) {
@@ -48,16 +48,33 @@ public class Matrix<T> {
 		}
 	}
 	
-	public void set(int x, int y, T value) {
-		this.controlParams(x, y);
-
-		this.datas.get(y).set(x, value);
-	}
 
 	public T get(int x, int y) {
-		this.controlParams(x, y);
+		Duo<Integer, Integer> c = this.controlParams(x, y);
 		
-		return this.datas.get(y).get(x);
+		return this.datas.get(c.y()).get(c.x());
+	}
+	
+	public T getRight(int x, int y) {
+		return this.get(x + 1, y);
+	}
+	
+	public T getBottom(int x, int y) {
+		return this.get(x, y + 1);
+	}
+	
+	public void set(int x, int y, T value) {
+		Duo<Integer, Integer> c = this.controlParams(x, y);
+
+		this.datas.get(c.y()).set(c.x(), value);
+	}
+	
+	public void setRight(int x, int y, T value) {
+		this.set(x + 1, y, value);
+	}
+	
+	public void setBottom(int x, int y, T value) {
+		this.set(x, y + 1, value);
 	}
 
 	public int getMaxX() {
@@ -133,7 +150,7 @@ public class Matrix<T> {
 		return this.datas.get(y).get(x);
 	}
 
-	public void controlParams(int x, int y) {
+	public Duo<Integer, Integer> controlParams(int x, int y) {
 		if(x < 0) {
 			throw new IllegalArgumentException("Given parameter x ("+ x +") is lower than 0");
 		} else if(y < 0) {
@@ -143,6 +160,8 @@ public class Matrix<T> {
 		} else if(x >= datas.get(y).size()) {
 			throw new IllegalArgumentException("Given parameter x ("+ x +") is greater than " + (datas.get(y).size() - 1));
 		}
+		
+		return new Duo<>(x, y);
 	}
 	
 	public Stream<T> stream() {
