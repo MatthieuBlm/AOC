@@ -1,6 +1,8 @@
 package com.matthieu.aoc.resolver.year_2021;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
@@ -12,41 +14,109 @@ public class Resolver24p1 implements Resolver {
 	protected static final int[] xIncrements = 	new int[] {10, 15, 14, 15, -8, 10, 16, -4, 11, -3, 12, -7, -15, -7};
 	protected static final int[] yIncrements = 	new int[] {2,  16,  9, 0,   1, 12,  6,  6,  3,  5,  9,  3,   2,  3};
 	protected static final int[] zDivider = 	new int[] {1,  1,   1, 1,  26,  1, 26, 26,  1, 26,  1, 26,  26, 26};
+	protected static final int threadPoolSize = 6;
 	
 	protected List<String> program;
 	protected boolean findMax;
 	protected Base9Digit digits;
+	protected int threadExecuting;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
 		this.program = values;
 		this.findMax = true;
 		this.digits = new Base9Digit("99999999999999");
+		this.threadExecuting = 0;
 	}
 
 	@Override
 	public boolean solve() throws SolveException {
 
-		for(int v = 0; v < 100_000_000; v++) {
+//		for(int v = 0; v < 100_000_000; v++) {
 //		while(true) {
-			int z = 0;
+//			int z = 0;
+//			
+//			for (int i = 0; i < 14; i++) {
+//				if(i >= 11 && z > 17576)
+//					break;
+//				
+//				z =  doCycleVerbose(digits.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
+//			}
+//
+//			if(z == 0) {
+//				break;
+//			}
+//			
+//			if(this.findMax)
+//				digits.decr();
+//			else
+//				digits.incr();
+//		}
+		
+		ExecutorService executorService = Executors.newFixedThreadPool(6);
+		
+		executorService.submit(() -> null);
+		
+		
+		
+		
+		Base9Digit searchBound = new Base9Digit("99999999999999");
+		Base9Digit targetA = new Base9Digit("99999885932914");	// to 50 000 000
+		Base9Digit targetB = new Base9Digit("99999771854818");	// to 100 000 000
+		
+		System.out.println(System.currentTimeMillis());
+		
+		new Thread(() -> {
+			Base9Digit dA = new Base9Digit("99999999999999");
 			
-			for (int i = 0; i < 14; i++) {
-				if(i >= 11 && z > 17576)
-					break;
+			for(int v = 0; v < 50_000_000; v++) {
+				int z = 0;
 				
-				z =  doCycleVerbose(digits.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
+				for (int i = 0; i < 14; i++) {
+					if(i >= 11 && z > 17576)
+						break;
+					
+					z =  doCycleVerbose(dA.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
+				}
+	
+				if(z == 0) {
+					break;
+				}
+				
+				if(this.findMax)
+					dA.decr();
+				else
+					dA.incr();
 			}
 
-			if(z == 0) {
-				break;
+			System.out.println(System.currentTimeMillis());
+		}).start();
+
+		new Thread(() -> {
+			Base9Digit dB = new Base9Digit("99999885932914");	// to 50 000 000
+
+			for(int v = 0; v < 50_000_000; v++) {
+				int z = 0;
+				
+				for (int i = 0; i < 14; i++) {
+					if(i >= 11 && z > 17576)
+						break;
+					
+					z =  doCycleVerbose(dB.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
+				}
+				
+				if(z == 0) {
+					break;
+				}
+				
+				if(this.findMax)
+					dB.decr();
+				else
+					dB.incr();
 			}
 			
-			if(this.findMax)
-				digits.decr();
-			else
-				digits.incr();
-		}
+			System.out.println(System.currentTimeMillis());
+		}).start();
 		
 		return true;
 	}
@@ -68,6 +138,14 @@ public class Resolver24p1 implements Resolver {
 		}
 		
 		System.out.println(z);
+		
+		digits = new Base9Digit("99999999999999");
+		
+		for (int i = 0; i < 100_000_000; i++) {
+			digits.decr();
+		}
+		
+		System.out.println(digits);
 	}
 	
 	public static int[] doCycle(int w, int xIncr, int yIncr, int zDiv, int z) {
