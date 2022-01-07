@@ -30,10 +30,10 @@ public class Resolver24p1 implements Resolver {
 	private static final int[] yIncrements = 	new int[] {2,  16,  9, 0,   1, 12,  6,  6,  3,  5,  9,  3,   2,  3};
 	private static final int[] zDivider = 		new int[] {1,  1,   1, 1,  26,  1, 26, 26,  1, 26,  1, 26,  26, 26};
 	private static final Object runningThreadCountLock = new Object();
-	private static final int THREAD_POOL_SIZE = 6;
-	private static final long THREAD_RANGE = 1_000_000_000l;
+	private static final int THREAD_POOL_SIZE = 12;
+	private static final long THREAD_RANGE = 10_000_000_000l;
 	
-	private boolean findMax;
+	protected boolean findMax;
 	private long searchBound;
 	private List<Base9Digit> results;
 	private int runningThreadCount;
@@ -41,13 +41,6 @@ public class Resolver24p1 implements Resolver {
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
 		this.findMax = true;
-//		this.searchBound = 22_876_792_454_960l;	// "99999999999999"
-//		this.searchBound = 22_809_792_454_960l;	// "99788159721525"
-		this.searchBound = 22_434_439_123_183l;
-//		this.searchBound = 22_434_339_123_183l;	// "98491959997994"  part 1 answer
-//		this.searchBound = 22_399_792_454_960l;	// "98382812421419"
-//		this.searchBound = 21_809_792_454_960l;	// "96299898337984"
-//		this.searchBound = 21_699_792_454_960l;	// "95854965868652"
 		this.results = new ArrayList<>();
 		this.runningThreadCount = 0;
 	}
@@ -56,6 +49,14 @@ public class Resolver24p1 implements Resolver {
 	public boolean solve() throws SolveException {
 		ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
+		if(this.findMax) {
+			this.searchBound = 22_876_792_454_960l;	// "99999999999999"
+	//		this.searchBound = 22_434_439_123_183l;	// part 1 answer - 100_000_000
+	//		this.searchBound = 22_434_339_123_183l;	// "98491959997994"  part 1 answer
+		} else {
+			this.searchBound = 0;
+		}
+
 		new Thread(() -> {
 			while(results.isEmpty()) {
 				
@@ -63,30 +64,26 @@ public class Resolver24p1 implements Resolver {
 					
 					executorService.submit(() -> {
 						UUID id = UUID.randomUUID();
-						Base9Digit digits = takeRange();
+						Base9Digit n = takeRange();
 						
-						logger.info("Searching thread {} started from {}", id, digits);
+						logger.info("Searching thread {} started from {}", id, n);
 						
 						for (long r = 0; r <= THREAD_RANGE; r++) {
 							
-							int z = 0;
-							
-							for (int i = 0; i < 14; i++) {
-								if(i >= 11 && z > 17576)
-									break;
-								
-								z = doCycle(digits.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
-							}
-							
-							if(z == 0) {
-								addResult(digits);
+							if( n.get(0) -5   == n.get(13) &&
+								n.get(1) + 1  == n.get(12) &&
+								n.get(2) + 5  == n.get(7)  &&
+								n.get(3) - 8  == n.get(4)  &&
+								n.get(5) - 4  == n.get(6)  &&
+								n.get(10) + 2 == n.get(11)) {
+								addResult(n);
 								break;
 							}
 							
 							if(this.findMax)
-								digits.decr();
+								n.decr();
 							else
-								digits.incr();
+								n.incr();
 						}
 						
 						freeThreadSlot();
@@ -95,7 +92,7 @@ public class Resolver24p1 implements Resolver {
 					});
 				} else {
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						logger.error("Can't pause current thread", e);
 						
@@ -111,39 +108,53 @@ public class Resolver24p1 implements Resolver {
 		return true;
 	}
 
+	private int calculateZ(Base9Digit digits) {
+		int z = 0;
+		
+		for (int i = 0; i < 14; i++) {
+			if(i >= 11 && z > 17576)
+				break;
+			
+			z = doCycle(digits.get(i), xIncrements[i], yIncrements[i], zDivider[i], z);
+		}
+		
+		return z;
+	}
+
 	@Override
 	public String get() {
 		return "Work in progress. See stdout to get result.";
 	}
 	
-	public int getZFromCache(Map<String, Integer> cache, Base9Digit digit) {
-		String key = new StringBuilder()
-							.append(digit.get(0)).append(digit.get(1))
-							.append(digit.get(2)).append(digit.get(3))
-							.append(digit.get(4)).toString();
-		
-		return cache.computeIfAbsent(key, k -> {
-			int z = 0;
-			
-			z = doCycle(digit.get(0), xIncrements[0], yIncrements[0], zDivider[0], z);
-			z = doCycle(digit.get(1), xIncrements[1], yIncrements[1], zDivider[1], z);
-			z = doCycle(digit.get(2), xIncrements[2], yIncrements[2], zDivider[2], z);
-			z = doCycle(digit.get(3), xIncrements[3], yIncrements[3], zDivider[3], z);
-			z = doCycle(digit.get(4), xIncrements[4], yIncrements[4], zDivider[4], z);
-			
-			return z;
-		});
-	}
-	
 	public synchronized Base9Digit takeRange() {
 		char[] base9StringWith0 = Long.toString(searchBound, 9).toCharArray();
+		
+		if(base9StringWith0.length < 14) {
+			char[] fullLengthString = new char[14];
+			int missing0 = fullLengthString.length - base9StringWith0.length;
+			
+			for (int i = 0; i < missing0; i++) {
+				fullLengthString[i] = '0';
+			}
+			
+			for (int i = missing0; i < fullLengthString.length; i++) {
+				fullLengthString[i] = base9StringWith0[i - missing0];
+			}
+			
+			base9StringWith0 = fullLengthString;
+		}
+		
 		StringBuilder base9StringWithout0 = new StringBuilder();
 		
 		for (char c : base9StringWith0) {
 			base9StringWithout0.append(Character.getNumericValue(c) + 1);
 		}
 		
-		searchBound -= THREAD_RANGE;
+		if(this.findMax)
+			searchBound -= THREAD_RANGE;
+		else
+			searchBound += THREAD_RANGE;
+		
 		return new Base9Digit(base9StringWithout0.toString());
 	}
 	
