@@ -22,12 +22,14 @@ public class Resolver23p2 implements Resolver {
 	protected Map<AmphipodsMap, Node> nodes;
 	protected AmphipodsMap initialState;
 	protected AmphipodsMap finalState;
+	private int roomSize;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
 		this.nodes = new HashMap<>();
-		this.initialState = new AmphipodsMap(new char[] {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'}, Arrays.asList(List.of('C', 'D', 'D', 'D'), List.of('C', 'C', 'B', 'D'), List.of('A', 'B', 'A', 'B'), List.of('B', 'A', 'C', 'A')));
-		this.finalState	  = new AmphipodsMap(new char[] {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'}, Arrays.asList(List.of('A', 'A', 'A', 'A'), List.of('B', 'B', 'B', 'B'), List.of('C', 'C', 'C', 'C'), List.of('D', 'D', 'D', 'D')));
+		this.roomSize = 4;
+		this.initialState = new AmphipodsMap(this.roomSize, new char[] {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'}, Arrays.asList(List.of('C', 'D', 'D', 'D'), List.of('C', 'C', 'B', 'D'), List.of('A', 'B', 'A', 'B'), List.of('B', 'A', 'C', 'A')));
+		this.finalState	  = new AmphipodsMap(this.roomSize, new char[] {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'}, Arrays.asList(List.of('A', 'A', 'A', 'A'), List.of('B', 'B', 'B', 'B'), List.of('C', 'C', 'C', 'C'), List.of('D', 'D', 'D', 'D')));
 	}
 
 	@Override
@@ -39,7 +41,6 @@ public class Resolver23p2 implements Resolver {
 		this.nodes.put(initialState, initialNode);
 		
 		toInitialize.add(initialState);
-		
 		
 		while(!toInitialize.isEmpty()) {
 			AmphipodsMap mapToProcess = toInitialize.remove(0);
@@ -58,9 +59,9 @@ public class Resolver23p2 implements Resolver {
 
 				// Setup nodes connection
 				currentNode.addDestination(node, mapAndDistance.b());
+				node.addDestination(currentNode, mapAndDistance.b());
 			}
 		}
-		
 		return true;
 	}
 
@@ -135,20 +136,27 @@ public class Resolver23p2 implements Resolver {
 		newRooms.get(2).addAll(mapToClone.getRooms().get(2));
 		newRooms.get(3).addAll(mapToClone.getRooms().get(3));
 		
-		return new AmphipodsMap(newOpenspace, newRooms);
+		return new AmphipodsMap(this.roomSize, newOpenspace, newRooms);
 	}
 	
-	private boolean isFreeSpace(AmphipodsMap map, int i) {
+	private boolean isEligibleSpace(AmphipodsMap map, int from, int i) {
+		if(isInOpenspace(from) && isInOpenspace(i))
+			return false;
+		
 		if(i == 0 || i == 1 || i == 3 || i == 5 || i == 7 || i == 9 || i == 10) {
 			return map.getOpenspace()[i] == '.';
 		} else if(i == 2){
-			return map.getRooms().get(0).size() < 4;
+			List<Character> room = map.getRooms().get(0);
+			return room.size() < this.roomSize && getTargetCharForRoom(i) == getAmphipod(map, from) && !room.contains('B') && !room.contains('C') && !room.contains('D');
 		} else if(i == 4){
-			return map.getRooms().get(1).size() < 4;
+			List<Character> room = map.getRooms().get(1);
+			return room.size() < this.roomSize && getTargetCharForRoom(i) == getAmphipod(map, from) && !room.contains('A') && !room.contains('C') && !room.contains('D');
 		} else if(i == 6){
-			return map.getRooms().get(2).size() < 4;
+			List<Character> room = map.getRooms().get(2);
+			return room.size() < this.roomSize && getTargetCharForRoom(i) == getAmphipod(map, from) && !room.contains('A') && !room.contains('B') && !room.contains('D');
 		} else if(i == 8){
-			return map.getRooms().get(3).size() < 4;
+			List<Character> room = map.getRooms().get(3);
+			return room.size() < this.roomSize && getTargetCharForRoom(i) == getAmphipod(map, from) && !room.contains('A') && !room.contains('B') && !room.contains('C');
 		}
 		
 		return false;
@@ -159,32 +167,36 @@ public class Resolver23p2 implements Resolver {
 		// If i is not an amphipod
 		if((isInOpenspace(i) && map.getOpenspace()[i] == '.') || (isInRoom(i) && getRoom(map, i).isEmpty()))
 			return Collections.emptyList();
+
+		// Amphipod don't need to move
+		if(isInRoom(i) && getRoom(map, i).stream().allMatch(c -> c == getTargetCharForRoom(i)))
+			return Collections.emptyList();
 		
 		
 		List<Integer> possibleIndexes = new ArrayList<>();
 		int indexToTest = i;
 		boolean openspaceBlocked = false;
 		
-		// Forward
-		while(++indexToTest < 11 && !openspaceBlocked) {
+		// Backward
+		while(--indexToTest >= 0 && !openspaceBlocked) {
 			
-			if(this.isFreeSpace(map, indexToTest))
+			if(this.isEligibleSpace(map, i, indexToTest))
 				possibleIndexes.add(indexToTest);
 			
-			else if(indexToTest == 0 || indexToTest == 1 || indexToTest == 3 || indexToTest == 5 || indexToTest == 7 || indexToTest == 9 || indexToTest == 10)
+			else if((indexToTest == 0 || indexToTest == 1 || indexToTest == 3 || indexToTest == 5 || indexToTest == 7 || indexToTest == 9 || indexToTest == 10) && map.getOpenspace()[indexToTest] != '.')
 				openspaceBlocked = true;
 		}
 
 		indexToTest = i;
 		openspaceBlocked = false;
 		
-		// Backward
-		while(--indexToTest >= 0 && !openspaceBlocked) {
+		// Forward
+		while(++indexToTest < 11 && !openspaceBlocked) {
 			
-			if(this.isFreeSpace(map, indexToTest))
+			if(this.isEligibleSpace(map, i, indexToTest))
 				possibleIndexes.add(indexToTest);
 			
-			else if(indexToTest == 0 || indexToTest == 1 || indexToTest == 3 || indexToTest == 5 || indexToTest == 7 || indexToTest == 9 || indexToTest == 10)
+			else if((indexToTest == 0 || indexToTest == 1 || indexToTest == 3 || indexToTest == 5 || indexToTest == 7 || indexToTest == 9 || indexToTest == 10) && map.getOpenspace()[indexToTest] != '.')
 				openspaceBlocked = true;
 		}
 
@@ -193,9 +205,9 @@ public class Resolver23p2 implements Resolver {
 			int distance = Math.abs(to - i);
 			
 			if(isInRoom(i))
-				distance += 4 - getRoom(map, i).size() + 1;
+				distance += this.roomSize - getRoom(map, i).size() + 1;
 			if(isInRoom(to))
-				distance += 4 - getRoom(map, to).size();
+				distance += this.roomSize - getRoom(map, to).size();
 			
 			distance *= this.getAmphipodMoveCost(this.getAmphipod(map, i));
 			
@@ -233,5 +245,18 @@ public class Resolver23p2 implements Resolver {
 			return 1000;
 		
 		throw new IllegalArgumentException("Unknown amphipod '"+ a +"'");
+	}
+	
+	private char getTargetCharForRoom(int index) {
+		if(index == 2)
+			return 'A';
+		if(index == 4)
+			return 'B';
+		if(index == 6)
+			return 'C';
+		if(index == 8)
+			return 'D';
+
+		throw new IllegalArgumentException("Illegal index "+ index);
 	}
 }

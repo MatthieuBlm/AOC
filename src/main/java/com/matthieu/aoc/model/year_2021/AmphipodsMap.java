@@ -8,9 +8,11 @@ public final class AmphipodsMap {
 
 	private final char[] openspace;
 	private final List<List<Character>> rooms;
+	private final int roomSize;
 
 	
-	public AmphipodsMap(char[] openspace, List<List<Character>> rooms) {
+	public AmphipodsMap(int roomSize, char[] openspace, List<List<Character>> rooms) {
+		this.roomSize = roomSize;
 		this.openspace = openspace;
 		this.rooms = rooms;
 	}
@@ -68,7 +70,7 @@ public final class AmphipodsMap {
 		List<List<Character>> tmpRooms = Arrays.asList(roomA, roomB, roomC, roomD);
 		
 		for (List<Character> room : tmpRooms) {
-			while(room.size() < 4)
+			while(room.size() < this.roomSize)
 				room.add(0, '.');
 		}
 		
@@ -78,17 +80,17 @@ public final class AmphipodsMap {
 				.append(tmpRooms.get(0).get(0)).append('#').append(tmpRooms.get(1).get(0)).append('#').append(tmpRooms.get(2).get(0)).append('#').append(tmpRooms.get(3).get(0))
 				.append("###\n");
 		
-		for (int ai = 1; ai < 4; ai++) {
+		for (int ai = 1; ai < this.roomSize; ai++) {
 			builder.append("  ");
 			
 			for (int ri = 0; ri < 4; ri++) {
 				builder.append('#').append(tmpRooms.get(ri).get(ai));
 			}
 			
-			builder.append("#\n");
+			builder.append("#  \n");
 		}
 		
-		builder.append("  #########\n");
+		builder.append("  #########  \n");
 
 		return builder.toString();
 	}
