@@ -30,10 +30,10 @@ public class Resolver1p1 implements Resolver {
 
 	@Override
 	public boolean solve() throws SolveException {
-		
-		int maxId = this.findMaxId();
-		this.result = this.calories.get(maxId);
-		
+		this.result = this.calories.stream()
+									.sorted((l1, l2) -> l2.compareTo(l1))
+									.findFirst()
+									.get();
 		return true;
 	}
 
