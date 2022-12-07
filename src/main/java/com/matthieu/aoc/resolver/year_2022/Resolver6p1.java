@@ -21,7 +21,7 @@ public class Resolver6p1 implements Resolver {
 	@Override
 	public boolean solve() throws SolveException {
 		
-		for (int i = 0; i < packet.length() - 4; i++) {
+		for (int i = 0; i < packet.length() - sequnenceSize; i++) {
 			if(areAllUnique(getSequence(i, sequnenceSize))) {
 				result = i + sequnenceSize;
 				break;
