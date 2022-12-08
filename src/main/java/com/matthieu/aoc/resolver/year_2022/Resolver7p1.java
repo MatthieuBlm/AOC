@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.exception.SolveException;
-import com.matthieu.aoc.modelyear_2022.filesystem.Filex;
+import com.matthieu.aoc.model.year_2022.filesystem.Filex;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver7p1 implements Resolver {

@@ -1,4 +1,4 @@
-package com.matthieu.aoc.modelyear_2022.filesystem;
+package com.matthieu.aoc.model.year_2022.filesystem;
 
 import java.util.ArrayList;
 import java.util.List;
