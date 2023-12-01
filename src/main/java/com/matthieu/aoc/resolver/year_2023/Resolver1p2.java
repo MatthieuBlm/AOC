@@ -11,45 +11,44 @@ public class Resolver1p2 extends Resolver1p1 {
 		values.stream().forEach(line -> {
 			String n = "";
 			
-			outerloop:
 			for (int i = 0; i < line.length(); i++) {
-				if(line.charAt(i) >= '0' && line.charAt(i) <= '9') {
-					n += Integer.parseInt(line.charAt(i) + "");
+				String number = findNumber(line, i);
+				
+				if(number != null) {
+					n += number;
 					break;
-					
-				} else {
-					for (int j = 3; j <= 5; j++) {
-						NUMBER number = this.getNumber(line.substring(i, Math.min(line.length(), i + j)));
-						
-						if(number != null) {
-							n += number.value();
-							break outerloop;
-						}
-					}
 				}
-					
+				
 			}
 
-			outerloop:
 			for (int i = line.length() - 1; i >= 0; i--) {
-				if(line.charAt(i) >= '0' && line.charAt(i) <= '9') {
-					n += Integer.parseInt(line.charAt(i) + "");
+				String number = findNumber(line, i);
+				
+				if(number != null) {
+					n += number;
 					break;
-
-				} else {
-					for (int j = 3; j <= 5; j++) {
-						NUMBER number = this.getNumber(line.substring(i, Math.min(line.length(), i + j)));
-						
-						if(number != null) {
-							n += number.value();
-							break outerloop;
-						}
-					}
 				}
 			}
 			
 			calibration.add(Integer.parseInt(n));
 		});
+	}
+	
+	private String findNumber(String line, int searchIndex) {
+		if(line.charAt(searchIndex) >= '0' && line.charAt(searchIndex) <= '9') {
+			return line.charAt(searchIndex) + "";
+			
+		} else {
+			for (int j = 3; j <= 5; j++) {
+				NUMBER number = this.getNumber(line.substring(searchIndex, Math.min(line.length(), searchIndex + j)));
+				
+				if(number != null) {
+					return number.value();
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	private NUMBER getNumber(String s) {
