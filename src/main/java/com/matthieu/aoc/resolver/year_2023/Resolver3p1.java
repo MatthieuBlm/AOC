@@ -37,10 +37,11 @@ public class Resolver3p1 implements Resolver {
 	
 	protected List<Integer> getNumerAround(int x, int y) {
 		List<Integer> numbers = new ArrayList<>();
+		
 		this.schema.forEachNeigthbours(x, y, (xn, yn, cn) -> {
 			int n = this.getNumber(xn, yn);
 			
-			if((numbers.isEmpty() || numbers.get(numbers.size() - 1) != n) && n != 0) {
+			if(n != 0) {
 				numbers.add(n);
 			}
 		});
