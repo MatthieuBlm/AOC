@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.matthieu.aoc.exception.PrepareDataException;
-import com.matthieu.aoc.exception.SolveException;
 import com.matthieu.aoc.resolver.Resolver;
 import com.matthieu.aoc.service.Extractor;
 
@@ -42,7 +41,7 @@ public class Resolver5p1 implements Resolver {
 	}
 
 	@Override
-	public boolean solve() throws SolveException {
+	public boolean solve() throws Exception {
 		
 		this.lowestLocation = this.seeds.stream()
 				.map(this::transformSeed)

@@ -8,45 +8,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.matthieu.aoc.exception.SolveException;
-
 public class Resolver5p2 extends Resolver5p1 {
 
 	@Override
-	public boolean solve() throws SolveException {
+	public boolean solve() throws Exception {
 		ExecutorService executor = Executors.newFixedThreadPool(10);
 		List<Callable<Long>> tasks = new ArrayList<>(10);
 		
 		for (int i = 0; i < this.seeds.size() - 1; i += 2) {
-			long seedBase = this.seeds.get(i);
-			long range = this.seeds.get(i + 1);
+			final long seedBase = this.seeds.get(i);
+			final long range = this.seeds.get(i + 1);
 			
 			tasks.add(() -> findLowestLocation(seedBase, range));
 		}
 
-		try {
-			List<Future<Long>> locations = executor.invokeAll(tasks);
+		List<Future<Long>> locations = executor.invokeAll(tasks);
 
-			this.lowestLocation = locations.stream()
-					.map(t -> {
-							try {
-								return t.get();
-							} catch (InterruptedException | ExecutionException e) {
-								e.printStackTrace();
-							}
-							return null;
-						})
-					.mapToLong(Long::longValue)
-					.sorted()
-					.findFirst()
-					.orElseThrow();
+		this.lowestLocation = locations.stream()
+				.map(t -> { try { return t.get();} catch (InterruptedException | ExecutionException e) { return null; }})
+				.mapToLong(Long::longValue)
+				.sorted()
+				.findFirst()
+				.orElseThrow();
 
-			return true;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		return false;
+		return true;
 	}
 	
 	private long findLowestLocation(long seedBase, long range) {
