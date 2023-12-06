@@ -1,7 +1,6 @@
 package com.matthieu.aoc.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.matthieu.aoc.exception.PrepareDataException;
-import com.matthieu.aoc.exception.SolveException;
 import com.matthieu.aoc.resolver.Resolver;
 import com.matthieu.aoc.service.InputFetcher;
 import com.matthieu.aoc.service.InputReader;
@@ -38,7 +36,7 @@ public class DayController {
 	
 	
 	@GetMapping("{year}/{dayNumber}/{partNumber}")
-	public ResponseEntity<String> resolve(@PathVariable int year, @PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody(required = false) String body) throws IOException, PrepareDataException, SolveException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+	public ResponseEntity<String> resolve(@PathVariable int year, @PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody(required = false) String body) throws Exception {
 		String resolverName = String.format("com.matthieu.aoc.resolver.year_%s.Resolver%sp%s", year, dayNumber, partNumber);
 		
 		// Find resolver class
