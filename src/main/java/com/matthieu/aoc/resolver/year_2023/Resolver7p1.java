@@ -4,37 +4,67 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver7p1 implements Resolver {
 
+	protected List<Hand> hands;
+	protected long total;
+	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
-		// TODO Auto-generated method stub
-
+		this.hands = values.stream()
+				.map(line -> line.split(" "))
+				.map(line -> new Hand(line[0], Integer.parseInt(line[1])))
+				.toList();
 	}
 
 	@Override
 	public boolean solve() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		this.hands = hands.stream().sorted().toList();
+		
+		this.total = IntStream.range(1, hands.size() + 1)
+				.mapToLong(i -> hands.get(i - 1).getBid() * i)
+				.sum();
+		
+		return true;
 	}
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.total + "";
 	}
 	
-
+	public static int getCardWeight(char c) {
+		// Is letter
+		if(c >= 65) {
+			if(c == 'T')
+				return 58;
+			if(c == 'J')
+				return 59;
+			if(c == 'Q')
+				return 60;
+			if(c == 'K')
+				return 61;
+			if(c == 'A')
+				return 62;
+		}
+		
+		// Is number
+		return c;
+	}
+	
 	protected class Hand implements Comparable<Hand> {
 		
 		protected char[] value;
+		protected int bid;
 		
-		public Hand(String value) {
+		public Hand(String value, int bid) {
 			this.value = value.toCharArray();
+			this.bid = bid;
 		}
 		
 		public Map<Character, Integer> getDetails() {
@@ -47,7 +77,7 @@ public class Resolver7p1 implements Resolver {
 			return details;
 		}
 		
-		public boolean isFiveOfKind() {
+		public boolean isFiveOfAKind() {
 			return this.getDetails().size() == 1;
 		}
 		
@@ -67,14 +97,14 @@ public class Resolver7p1 implements Resolver {
 
 		public boolean hasTwoPair() {
 			Collection<Integer> detailsValues = this.getDetails().values();
-			return detailsValues.stream().anyMatch(n -> n == 1) &&
-					detailsValues.stream().filter(n -> n != 1).allMatch(n -> n == 2);
+			return detailsValues.stream().filter(n -> n == 1).count() == 1 &&
+					detailsValues.stream().filter(n -> n == 2).count() == 2;
 		}
 		
 		public boolean hasOnePair() {
 			Collection<Integer> detailsValues = this.getDetails().values();
-			return detailsValues.stream().anyMatch(n -> n == 2) &&
-					detailsValues.stream().filter(n -> n != 2).allMatch(n -> n == 1);
+			return detailsValues.stream().filter(n -> n == 2).count() == 1 &&
+					detailsValues.stream().filter(n -> n == 1).count() == 3;
 		}
 		
 		public boolean isHighCard() {
@@ -82,7 +112,7 @@ public class Resolver7p1 implements Resolver {
 		}
 		
 		public int getWeight() {
-			if(this.isFiveOfKind()) {
+			if(this.isFiveOfAKind()) {
 				return 6;
 			} else if(this.isFourOfAKind()) {
 				return 5;
@@ -101,25 +131,6 @@ public class Resolver7p1 implements Resolver {
 			throw new IllegalStateException();
 		}
 		
-		public static int getCardWeight(char c) {
-			// Is letter
-			if(c >= 65) {
-				if(c == 'T')
-					return 58;
-				if(c == 'J')
-					return 59;
-				if(c == 'Q')
-					return 60;
-				if(c == 'K')
-					return 61;
-				if(c == 'A')
-					return 62;
-			}
-			
-			// Is number
-			return c;
-		}
-		
 		@Override
 		public int compareTo(Hand o) {
 			int comparaison = Integer.compare(this.getWeight(), o.getWeight());
@@ -128,7 +139,7 @@ public class Resolver7p1 implements Resolver {
 				return comparaison;
 			}
 			
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 5; i++) {
 				int cardComparaison = Integer.compare(getCardWeight(value[i]), getCardWeight(o.value[i]));
 				
 				if(cardComparaison != 0) {
@@ -137,6 +148,38 @@ public class Resolver7p1 implements Resolver {
 			}
 			
 			return 0;
+		}
+
+		public char[] getValue() {
+			return value;
+		}
+
+		public void setValue(char[] value) {
+			this.value = value;
+		}
+
+		public int getBid() {
+			return bid;
+		}
+
+		public void setBid(int bid) {
+			this.bid = bid;
+		}
+
+		@Override
+		public String toString() {
+			return "value=" + new String(value) + ", bid=" + bid;
+		}
+		
+		public String detailedString() {
+			return this.toString() + "\t" +
+					(isFiveOfAKind() ? "1" : "_") +
+					(isFourOfAKind() ? "1" : "_") +
+					(isFullHouse() ? "1" : "_") +
+					(isThreeOfAKind() ? "1" : "_") +
+					(hasTwoPair() ? "1" : "_") +
+					(hasOnePair() ? "1" : "_") +
+					(isHighCard() ? "1" : "_");
 		}
 	}
 }
