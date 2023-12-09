@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Extractor {
 	
-	private static final Pattern MATCH_NUMBERS = Pattern.compile("\\d+");
+	private static final Pattern MATCH_NUMBERS = Pattern.compile("-?\\d+");
 	private static final Pattern MATCH_LETTERS = Pattern.compile("\\w+");
 
 	private Extractor() {}
