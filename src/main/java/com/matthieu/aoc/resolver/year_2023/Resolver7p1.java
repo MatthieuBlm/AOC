@@ -13,9 +13,11 @@ public class Resolver7p1 implements Resolver {
 
 	protected List<Hand> hands;
 	protected long total;
+	protected static int part;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
+		Resolver7p1.part = 1; // To customise getCardWeight behaviour
 		this.hands = values.stream()
 				.map(line -> line.split(" "))
 				.map(line -> new Hand(line[0], Integer.parseInt(line[1])))
@@ -38,13 +40,13 @@ public class Resolver7p1 implements Resolver {
 		return this.total + "";
 	}
 	
-	public static int getCardWeight(char c) {
+	protected static int getCardWeight(char c) {
 		// Is letter
 		if(c >= 65) {
 			if(c == 'T')
 				return 58;
 			if(c == 'J')
-				return 59;
+				return part == 1 ? 59 : 47;
 			if(c == 'Q')
 				return 60;
 			if(c == 'K')
@@ -61,16 +63,20 @@ public class Resolver7p1 implements Resolver {
 		
 		protected char[] value;
 		protected int bid;
+		protected char[] max;
 		
 		public Hand(String value, int bid) {
 			this.value = value.toCharArray();
 			this.bid = bid;
+			this.max = null;
 		}
-		
+
 		public Map<Character, Integer> getDetails() {
 			Map<Character, Integer> details = new HashMap<>();
 			
-			for (char c : value) {
+			char[] valueToUse = this.max != null ? this.max :  this.value;
+			
+			for (char c : valueToUse) {
 				details.compute(c, (k, v) -> v == null ? 1 : v + 1);
 			}
 			
@@ -165,10 +171,15 @@ public class Resolver7p1 implements Resolver {
 		public void setBid(int bid) {
 			this.bid = bid;
 		}
+		
+		public Hand setMax(char[] value) {
+			this.max = value;
+			return this;
+		}
 
 		@Override
 		public String toString() {
-			return "value=" + new String(value) + ", bid=" + bid;
+			return "[value=" + new String(value) + ", max=" + new String(max) + ", bid=" + bid +"]";
 		}
 		
 		public String detailedString() {

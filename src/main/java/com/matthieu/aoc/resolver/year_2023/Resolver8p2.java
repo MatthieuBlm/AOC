@@ -62,8 +62,8 @@ public class Resolver8p2 extends Resolver8p1 {
 				// Lap done
 				if(head.endsWith("Z")) {
 					long loopStart = positions.get(i).indexOf(this.getNextNode(head, instructionIndex));
-					long loopSize = positions.get(i).size();
-					System.out.println(loopStart);
+					long loopSize = positions.get(i).size() - loopStart;
+					System.out.println(loopStart + " " + loopSize);
 					
 					optimizedStep = optimizedStep == null ? BigInteger.valueOf(loopSize) : Calculator.bigLeastCommonMultiple(BigInteger.valueOf(loopSize), optimizedStep);
 					
