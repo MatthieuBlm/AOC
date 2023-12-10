@@ -2,6 +2,8 @@ package com.matthieu.aoc.resolver.year_2023;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.matthieu.aoc.exception.PrepareDataException;
@@ -40,6 +42,7 @@ public class Resolver10p1 implements Resolver {
 			}
 		});
 		
+		this.currentPositions.forEach(pos -> this.distance.set(pos.x, pos.y, 1));
 	}
 
 	@Override
@@ -49,7 +52,8 @@ public class Resolver10p1 implements Resolver {
 			
 			this.currentPositions = currentPositions.stream()
 					.map(this::nextPos)
-					.filter(pos -> pos.c != 'S').toList();
+					.filter(Predicate.not(PipePos::hasReachedAlreadySeenPath))
+					.toList();
 		}
 		
 		return true;
@@ -57,23 +61,27 @@ public class Resolver10p1 implements Resolver {
 
 	@Override
 	public String get() {
-		return this.distance.stream().mapToInt(Integer::intValue).max() + "";
+		return this.distance.stream()
+				.filter(Objects::nonNull)
+				.mapToInt(Integer::intValue)
+				.max()
+				.orElseThrow()+ "";
 	}
 	
 	protected PipePos nextPos(PipePos current) {
 		final List<PipePos> nexts = new ArrayList<>();
 		
 		this.map.forEachNeigthboursCross(current.x, current.y, (nextX, nextY, c) -> {
-			if(current.x - nextX == 1 && pipeToWest(current.c) && pipeToEast(c) && current.from != Direction.EAST) {
+			if(nextX - current.x == 1 && pipeToEast(current.c) && pipeToWest(c) && current.from != Direction.EAST) {
 				nexts.add(new PipePos(nextX, nextY, c, Direction.WEST));
 				
-			} else if(current.y - nextX == - 1 && pipeToEast(current.c) && pipeToWest(c) && current.from != Direction.WEST) {
+			} else if(nextX - current.x == -1 && pipeToWest(current.c) && pipeToEast(c) && current.from != Direction.WEST) {
 				nexts.add(new PipePos(nextX, nextY, c, Direction.EAST));
 				
-			} else if(current.y - nextY == 1 && pipeToNorth(current.c) && pipeToSouth(c) && current.from != Direction.SOUTH) {
+			} else if(nextY - current.y == 1 && pipeToSouth(current.c) && pipeToNorth(c) && current.from != Direction.SOUTH) {
 				nexts.add(new PipePos(nextX, nextY, c, Direction.NORTH));
 				
-			} else if(current.y - nextY == -1 && pipeToSouth(current.c) && pipeToNorth(c) && current.from != Direction.NORTH) {
+			} else if(nextY - current.y == -1 && pipeToNorth(current.c) && pipeToSouth(c) && current.from != Direction.NORTH) {
 				nexts.add(new PipePos(nextX, nextY, c, Direction.SOUTH));
 			}
 		});
@@ -88,9 +96,13 @@ public class Resolver10p1 implements Resolver {
 		Integer nextDistance = this.distance.get(next.x, next.y);
 		int currentIncremented = this.distance.get(current.x, current.y) + 1;
 		
-		// If next is null, use current increment, or else use minimum of these two values
-		int newDistance = nextDistance == null ? currentIncremented : Math.min(currentIncremented, nextDistance);
-		this.distance.set(next.x, next.y, newDistance);
+		if(nextDistance == null) {
+			this.distance.set(next.x, next.y, currentIncremented);
+		} else {
+			this.distance.set(next.x, next.y, Math.min(currentIncremented, nextDistance));
+			next.setHasReachedAlreadySeenPath();
+		}
+
 		
 		return next;
 	}
@@ -131,14 +143,24 @@ public class Resolver10p1 implements Resolver {
 		protected int y;
 		protected char c;
 		protected Direction from;
+		protected boolean hasReachedAlreadySeenPath;
 		
 		public PipePos(int x, int y, char c, Direction from) {
 			this.x = x;
 			this.y = y;
 			this.c = c;
 			this.from = from;
+			this.hasReachedAlreadySeenPath = false;
 		}
 
+		public void setHasReachedAlreadySeenPath() {
+			this.hasReachedAlreadySeenPath = true;
+		}
+		
+		public boolean hasReachedAlreadySeenPath() {
+			return this.hasReachedAlreadySeenPath;
+		}
+		
 		@Override
 		public String toString() {
 			return "PipePos [x=" + x + ", y=" + y + ", c=" + c + ", from=" + from + "]";
