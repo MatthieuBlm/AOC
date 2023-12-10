@@ -170,6 +170,21 @@ public class Matrix<T> {
 				.flatMap(List::stream);
 	}
 	
+	public Stream<Cell<T>> cellStream() {
+		List<Cell<T>> cells = new ArrayList<>();
+		
+		for (int y = 0; y < this.getHeight(); y++) {
+			for (int x = 0; x < this.getWidth(); x++) {
+				
+				T value = this.getQuietly(x, y);
+				
+				cells.add(new Cell<T>(x, y, value));
+			}
+		}
+		
+		return cells.stream();
+	}
+	
 	public void forEach(Consumer<T> consumer) {
 		for (int y = 0; y < this.getHeight(); y++) {
 			for (int x = 0; x < this.getWidth(); x++) {
