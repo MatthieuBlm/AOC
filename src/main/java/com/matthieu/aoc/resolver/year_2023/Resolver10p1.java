@@ -26,7 +26,6 @@ public class Resolver10p1 implements Resolver {
 		this.start = this.map.cellStream().filter(c -> c.value() == 'S').findAny().orElseThrow();
 		this.currentPositions = new ArrayList<>();
 		
-		
 		this.map.forEachNeigthboursCross(start.x(), start.y(), (x, y, c) -> {
 			if(x - start.x() == 1 && pipeToWest(c)) {
 				currentPositions.add(new PipePos(x, y, c, Direction.WEST));
@@ -102,7 +101,6 @@ public class Resolver10p1 implements Resolver {
 			this.distance.set(next.x, next.y, Math.min(currentIncremented, nextDistance));
 			next.setHasReachedAlreadySeenPath();
 		}
-
 		
 		return next;
 	}
