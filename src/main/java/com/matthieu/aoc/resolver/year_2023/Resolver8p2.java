@@ -12,33 +12,6 @@ public class Resolver8p2 extends Resolver8p1 {
 
 	private BigInteger optimizedStep;
 	
-//	@Override
-//	public boolean solve() throws Exception {
-//		List<String> positions = this.nodes.keySet().stream().filter(key -> key.endsWith("A")).collect(Collectors.toCollection(ArrayList::new));
-//		int instructionIndex = 0;
-//		
-//		while(!positions.stream().allMatch(pos -> pos.endsWith("Z"))) {
-//			if(this.instructions[instructionIndex] == 'L') {
-//				for (int i = 0; i < positions.size(); i++) {
-//					positions.set(i, this.nodes.get(positions.get(i)).a());
-//				}
-//				
-//			} else if(this.instructions[instructionIndex] == 'R') {
-//				for (int i = 0; i < positions.size(); i++) {
-//					positions.set(i, this.nodes.get(positions.get(i)).b());
-//				}
-//				
-//			} else {
-//				throw new IllegalStateException();
-//			}
-//			
-//			steps++;
-//			instructionIndex = (int) (steps % instructions.length);
-//		}
-//		
-//		return true;
-//	}
-	
 	@Override
 	public boolean solve() throws Exception {
 		int instructionIndex = 0;
@@ -61,9 +34,7 @@ public class Resolver8p2 extends Resolver8p1 {
 				String head = getHead(positions.get(i));
 				// Lap done
 				if(head.endsWith("Z")) {
-					long loopStart = positions.get(i).indexOf(this.getNextNode(head, instructionIndex));
-					long loopSize = positions.get(i).size() - loopStart;
-					System.out.println(loopStart + " " + loopSize);
+					int loopSize = positions.get(i).size() - 1;
 					
 					optimizedStep = optimizedStep == null ? BigInteger.valueOf(loopSize) : Calculator.bigLeastCommonMultiple(BigInteger.valueOf(loopSize), optimizedStep);
 					
