@@ -17,7 +17,7 @@ public class Resolver11p1 implements Resolver {
 	protected Matrix<Character> space;
 	protected Matrix<Character> enlargedSpace;
 	protected List<Cell<Character>> galaxies;
-	protected List<Integer> distances;
+	protected List<Long> distances;
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
@@ -40,7 +40,7 @@ public class Resolver11p1 implements Resolver {
 
 	@Override
 	public String get() {
-		return this.distances.stream().mapToInt(Integer::intValue).sum() + "";
+		return this.distances.stream().mapToLong(Long::longValue).sum() + "";
 	}
 
 	protected void expandOnce() {
@@ -60,7 +60,7 @@ public class Resolver11p1 implements Resolver {
 		}
 	}
 	
-	private Set<Duo<Cell<Character>, Cell<Character>>> makePaires(List<Cell<Character>> galaxies) {
+	protected Set<Duo<Cell<Character>, Cell<Character>>> makePaires(List<Cell<Character>> galaxies) {
 		Set<Duo<Cell<Character>, Cell<Character>>> paires = new HashSet<>();
 		
 		for (int i = 0; i < galaxies.size(); i++) {
@@ -94,7 +94,7 @@ public class Resolver11p1 implements Resolver {
 		return paires;
 	}
 	
-	protected int shortestDistance(Cell<Character> a, Cell<Character> b) {
+	protected long shortestDistance(Cell<Character> a, Cell<Character> b) {
 		return Math.max(a.x(), b.x()) - Math.min(a.x(), b.x()) + Math.max(a.y(), b.y()) - Math.min(a.y(), b.y());
 	}
 }
