@@ -25,18 +25,18 @@ public class Matrix<T> {
 		if(values.get(0).contains(separator)) {
 			this.datas = values.stream()
 					.map(line -> Arrays.asList(line.split(separator)))
-					.map(list -> list.stream().map(parser::parse).collect(Collectors.toList()))
+					.map(list -> list.stream().map(parser::parse).collect(Collectors.toCollection(ArrayList::new)))
 					.map(Row<T>::new)
-					.collect(Collectors.toList());
+					.collect(Collectors.toCollection(ArrayList::new));
 			
 		} else {
 			this.datas = values.stream()
 					.map(line -> line.chars().mapToObj(c -> (char) c)
 												.map(String::valueOf)
 												.map(parser::parse)
-												.collect(Collectors.toList()))
+												.collect(Collectors.toCollection(ArrayList::new)))
 					.map(Row<T>::new)
-					.collect(Collectors.toList());
+					.collect(Collectors.toCollection(ArrayList::new));
 		}
 	}
 	
@@ -119,6 +119,38 @@ public class Matrix<T> {
 		}
 		
 		return columns;
+	}
+	
+	public void insertRow(int y, List<T> row) {
+		List<T> modifiableList = new ArrayList<>();
+		modifiableList.addAll(row);
+		
+		this.insertRow(y, new Row<>(modifiableList));
+	}
+	
+	public void insertRow(int y, Row<T> row) {
+		if(row.size() != this.getWidth()) {
+			throw new IllegalArgumentException(String.format("Row hasn't right size, expected %s but has %s.", this.getWidth(), row.size()));
+		}
+		
+		this.datas.add(y, row);
+	}
+	
+	public void insertColumn(int x, List<T> column) {
+		List<T> modifiableList = new ArrayList<>();
+		modifiableList.addAll(column);
+		
+		this.insertColumn(x, new Row<>(modifiableList));
+	}
+	
+	public void insertColumn(int x, Row<T> column) {
+		if(column.size() != this.getHeight()) {
+			throw new IllegalArgumentException(String.format("Column hasn't right size, expected %s but has %s.", this.getHeight(), column.size()));
+		}
+		
+		for (int i = 0; i < this.getHeight(); i++) {
+			this.datas.get(i).get().add(x, column.get(i));
+		}
 	}
 	
 	public List<T> getNeightbours(int x, int y) {
