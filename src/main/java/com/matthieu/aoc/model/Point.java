@@ -20,6 +20,10 @@ public class Point {
 		this.y = y;
 	}
 	
+	public int x() {
+		return this.getX();
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -28,6 +32,10 @@ public class Point {
 		this.x = x;
 	}
 
+	public int y() {
+		return this.getY();
+	}
+	
 	public int getY() {
 		return y;
 	}
@@ -35,6 +43,5 @@ public class Point {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
 	
 }

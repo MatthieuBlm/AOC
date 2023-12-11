@@ -23,20 +23,28 @@ public class Polygon {
 		return this.points;
 	}
 	
+	/**
+	 * TODO May not work in every case (cf 2023, day 10 part 2)
+	 */
 	public boolean isInside(int x, int y) {
 		return this.isInside(new Point(x, y));
 	}
 	
+	/**
+	 * TODO May not work in every case (cf 2023, day 10 part 2)
+	 */
 	public boolean isInside(Point p) {
-		final int INF = 10000;
+		final int INF = 1_000_000;
 		
         if (this.points.size() < 3) {
         	return false;
         }
  
-        Point extreme = new Point(INF, p.getY());
+        Point extreme = new Point(INF, p.y());
  
-        int count = 0, i = 0;
+        int count = 0;
+        int i = 0;
+        
         do {
             int next = (i + 1) % this.points.size();
             if (doIntersect(points.get(i), points.get(next), p, extreme)) {
@@ -77,7 +85,7 @@ public class Polygon {
 	}
 	
 	private int orientation(Point p, Point q, Point r) {
-		int val = (q.getY() - p.getY()) * (r.getX() - q.getX()) - (q.getX() - p.getX()) * (r.getY() - q.getY());
+		int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
 		 
         if (val == 0) {
         	return 0;
@@ -87,24 +95,8 @@ public class Polygon {
 	}
 	
 	private boolean onSegment(Point p, Point q, Point r) {
-		return q.getX() <= Math.max(p.getX(), r.getX()) && q.getX() >= Math.min(p.getX(), r.getX())
-                && q.getY() <= Math.max(p.getY(), r.getY()) && q.getY() >= Math.min(p.getY(), r.getY());
+		return q.x() <= Math.max(p.x(), r.x()) && q.x() >= Math.min(p.x(), r.x())
+                && q.y() <= Math.max(p.y(), r.y()) && q.y() >= Math.min(p.y(), r.y());
 	}
 	
-	public static void main(String[] args) {
-		Polygon p = new Polygon();
-		
-		p.addPoint(0, 0);
-		p.addPoint(0, 10);
-		p.addPoint(2, 10);
-		p.addPoint(2, 2);
-		p.addPoint(4, 2);
-		p.addPoint(4, 10);
-		p.addPoint(10, 10);
-		p.addPoint(10, 0);
-		
-		System.out.println(p.isInside(1, 1));
-		System.out.println(p.isInside(1, 9));
-		System.out.println(p.isInside(3, 8));
-	}
 }

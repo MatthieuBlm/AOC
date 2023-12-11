@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.model.Direction;
+import com.matthieu.aoc.model.Point;
 import com.matthieu.aoc.model.Polygon;
 import com.matthieu.aoc.model.matrix.Matrix;
 
@@ -20,7 +21,7 @@ public class Resolver10p2 extends Resolver10p1 {
 		super.prepareData(values);
 		
 		this.path = new Matrix<>(map.getWidth(), map.getHeight(), () -> '.');
-		this.path.set(start.x(), start.y(), '#');
+		this.path.set(start.x(), start.y(), '|');
 		this.loop = new Polygon();
 		this.loop.addPoint(start.x(), start.y());
 	}
@@ -31,7 +32,7 @@ public class Resolver10p2 extends Resolver10p1 {
 		
 		while(current != null) {
 			
-			this.path.set(current.x, current.y, '#');
+			this.path.set(current.x, current.y, current.c);
 			
 			if(current.c != '-' && current.c != '|') {
 				this.loop.addPoint(current.x, current.y);
@@ -41,23 +42,10 @@ public class Resolver10p2 extends Resolver10p1 {
 		}
 		
 		this.path.forEach((x, y, isPath) -> {
-			if(isPath == '.' && loop.isInside(x, y)) {
+			if(isPath == '.' && isInside(x, y)) {
 				this.pointsInside++;
 			}
 		});
-		
-		System.out.println(this.path);
-		System.out.println(loop.isInside(2, 6));
-		System.out.println(loop.isInside(3, 6));
-		System.out.println(loop.isInside(4, 4));
-		System.out.println();
-		
-//		this.path.forEach((x, y, isPath) -> System.out.println(loop.isInside(x, y)));
-		
-		Matrix<Character> test = new Matrix<>(this.path.getWidth(), this.path.getHeight(), () -> '.');
-		this.loop.getPoints().forEach(p -> test.set(p.getX(), p.getY(), '#'));
-		
-		System.out.println(test);
 		
 		return true;
 	}
@@ -93,6 +81,23 @@ public class Resolver10p2 extends Resolver10p1 {
 		}
 		
 		return nexts.get(0);
+	}
+	
+	private boolean isInside(int x, int y) {
+		int intersections = 0;
+		Point p = new Point(--x, y);
+		
+		while(p.x() >= 0) {
+			char currentPipe = this.path.get(p.x(), p.y());
+			
+			if(currentPipe == '|' || currentPipe == 'F' || currentPipe == '7' ) {
+				intersections++;
+			}
+			
+			p.setX(--x);
+		}
+		
+		return intersections % 2 == 1;
 	}
 	
 }
