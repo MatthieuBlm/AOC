@@ -61,7 +61,7 @@ public class Resolver11p1 implements Resolver {
 	}
 	
 	protected Set<Duo<Cell<Character>, Cell<Character>>> makePaires(List<Cell<Character>> galaxies) {
-		Set<Duo<Cell<Character>, Cell<Character>>> paires = new HashSet<>();
+		Set<Duo<Cell<Character>, Cell<Character>>> pairs = new HashSet<>();
 		
 		for (int i = 0; i < galaxies.size(); i++) {
 			for (int j = 0; j < galaxies.size(); j++) {
@@ -69,7 +69,7 @@ public class Resolver11p1 implements Resolver {
 					Cell<Character> a;
 					Cell<Character> b;
 					
-					// Ordered to make HashSet guarantee unique paires of Cell
+					// Ordered to make HashSet guarantee unique pairs of Cell
 					if(galaxies.get(i).x() < galaxies.get(j).x()) {
 						a = galaxies.get(i);
 						b = galaxies.get(j);
@@ -86,12 +86,12 @@ public class Resolver11p1 implements Resolver {
 						}
 					}
 					
-					paires.add(new Duo<>(a, b));
+					pairs.add(new Duo<>(a, b));
 				}
 			}
 		}
 		
-		return paires;
+		return pairs;
 	}
 	
 	protected long shortestDistance(Cell<Character> a, Cell<Character> b) {
