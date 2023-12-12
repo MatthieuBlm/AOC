@@ -6,17 +6,24 @@ public class CustomBaseNumber {
 
 	private char[] baseDigits;
 	private int[] value;
+	private int base;
 	
 	public CustomBaseNumber(int size, char[] baseDigits) {
 		this.baseDigits = baseDigits;
 		this.value = new int[size];
+		this.base = baseDigits.length;
+	}
+	
+	public CustomBaseNumber(int size, int base) {
+		this.value = new int[size];
+		this.base = base;
 	}
 	
 	public void increment() {
 		this.value[0]++;
 		
 		for (int i = 0; i < value.length; i++) {
-			if(value[i] >= this.baseDigits.length) {
+			if(value[i] >= this.base) {
 				value[i] = 0;
 				
 				if(i + 1 < value.length) {
@@ -28,6 +35,18 @@ public class CustomBaseNumber {
 	
 	public char get(int i) {
 		return this.baseDigits[value[i]];
+	}
+	
+	public int[] getDecimalValue() {
+		return this.value;
+	}
+	
+	public int getDecimalValue(int i) {
+		return this.value[i];
+	}
+	
+	public void setDecimalValue(int i, int value) {
+		this.value[i] = value;
 	}
 	
 	public String stringValue() {
@@ -44,13 +63,27 @@ public class CustomBaseNumber {
 		return builder.toString();
 	}
 	
+	public String decimalValue() {
+		StringBuilder result = new StringBuilder();
+		
+		for (int i = 0; i < value.length; i++) {
+			result.append(value[i]).append(" ");
+		}
+		
+		return result.toString();
+	}
+	
 	public boolean isMaxValue() {
-		return Arrays.stream(value).allMatch(i -> i >= baseDigits.length - 1);
+		return Arrays.stream(value).allMatch(i -> i >= base - 1);
 	}
 	
 	@Override
 	public String toString() {
-		return this.stringValue();
+		if(this.baseDigits != null) {
+			return this.stringValue();
+		} else {
+			return this.decimalValue();
+		}
 	}
 	
 }
