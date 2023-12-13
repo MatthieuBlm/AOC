@@ -16,7 +16,6 @@ public class Matrix<T> {
 
 	protected List<Row<T>> datas;
 	
-	
 	public Matrix(List<String> values, Parser<T> parser) {
 		this(values, parser, " ");
 	}
@@ -170,6 +169,12 @@ public class Matrix<T> {
 						.map(c -> this.getQuietly(c.a(), c.b()))
 						.filter(Objects::nonNull)
 						.collect(Collectors.toList());
+	}
+	
+	public List<Cell<T>> getCells() {
+		List<Cell<T>> cells = new ArrayList<>();
+		this.forEach((x, y, v) -> cells.add(new Cell<>(x, y, v)));
+		return cells;
 	}
 	
 	public T getQuietly(int x, int y) {

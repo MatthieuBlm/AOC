@@ -2,7 +2,9 @@ package com.matthieu.aoc.model.matrix;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.matthieu.aoc.service.parser.Parser;
@@ -46,4 +48,29 @@ public class Row<T> {
 	public Stream<T> stream() {
 		return this.value.stream();
 	}
+
+	@Override
+	public String toString() {
+		return  "[" + this.value.stream().map(Objects::toString).collect(Collectors.joining(","))+ "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
+	@Override
+	@SuppressWarnings("rawtypes")
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Row other = (Row) obj;
+		return Objects.equals(value, other.value);
+	}
+	
+	
 }
