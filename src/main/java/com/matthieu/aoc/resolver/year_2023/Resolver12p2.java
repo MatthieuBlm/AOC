@@ -18,6 +18,4 @@ public class Resolver12p2 extends Resolver12p1 {
 				.toList();
 	}
 	
-	
-	
 }

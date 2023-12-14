@@ -8,18 +8,18 @@ public class CustomBaseNumber {
 	private int[] value;
 	private int base;
 	
-	public CustomBaseNumber(int size, char[] baseDigits) {
+	public CustomBaseNumber(int length, char[] baseDigits) {
 		this.baseDigits = baseDigits;
-		this.value = new int[size];
+		this.value = new int[length];
 		this.base = baseDigits.length;
 	}
 	
-	public CustomBaseNumber(int size, int base) {
-		this.value = new int[size];
+	public CustomBaseNumber(int length, int base) {
+		this.value = new int[length];
 		this.base = base;
 	}
 	
-	public void increment() {
+	public CustomBaseNumber increment() {
 		this.value[0]++;
 		
 		for (int i = 0; i < value.length; i++) {
@@ -31,6 +31,8 @@ public class CustomBaseNumber {
 				}
 			}
 		}
+		
+		return this;
 	}
 	
 	public char get(int i) {
@@ -75,6 +77,10 @@ public class CustomBaseNumber {
 	
 	public boolean isMaxValue() {
 		return Arrays.stream(value).allMatch(i -> i >= base - 1);
+	}
+	
+	public int length() {
+		return this.value.length;
 	}
 	
 	@Override

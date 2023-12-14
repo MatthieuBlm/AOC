@@ -23,10 +23,6 @@ public class Resolver12p1 implements Resolver {
 				.toList();
 	}
 	
-	// TODO
-	// - Toujours garantir le bon ordre des groupes
-	// - Interdir la supperposition de groupes
-
 	@Override
 	public boolean solve() throws Exception {
 		possibilities = conditionsRecords.stream().map(records -> {
@@ -34,13 +30,14 @@ public class Resolver12p1 implements Resolver {
 			Set<String> recordsPossibilities = new HashSet<>();
 			
 			while(!cbn.isMaxValue()) {
+				// Search for next usable number
+				while(!isPossiblePositionNumber(cbn.increment(), records) && !cbn.isMaxValue()) {};
+				
 				String possibility = generateConditions(records.conditions().length(), records.groups(), cbn);
-				System.out.println(possibility);
+				
 				if(isValidSprings(possibility, records)) {
 					recordsPossibilities.add(possibility);
 				}
-				
-				cbn.increment();
 			}
 			
 			return recordsPossibilities.size();
@@ -54,6 +51,24 @@ public class Resolver12p1 implements Resolver {
 		return this.possibilities.stream().mapToInt(Integer::intValue).sum() + "";
 	}
 	
+	// Ex: ???.### 1,1,3
+	private boolean isPossiblePositionNumber(CustomBaseNumber n, ConditionRecords condition) {
+		for (int i = 0; i < n.length() - 1; i++) {
+			// Make sure to have each group in right order
+			if(n.getDecimalValue(i) >= n.getDecimalValue(i + 1)) {
+				return false;
+			}
+		}
+			
+		for (int i = 0; i < n.length() - 1; i++) {
+			// Make sure there is no overlap between groups
+			if(n.getDecimalValue(i) + condition.groups().get(i) >= n.getDecimalValue(i + 1)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 	
 	protected String generateConditions(int conditionLength, List<Long> groups, CustomBaseNumber step) {
 		StringBuilder result = new StringBuilder();
