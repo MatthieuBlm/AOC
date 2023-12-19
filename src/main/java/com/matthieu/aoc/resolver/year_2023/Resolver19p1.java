@@ -1,9 +1,5 @@
 package com.matthieu.aoc.resolver.year_2023;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +10,7 @@ import java.util.stream.Stream;
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.resolver.Resolver;
 import com.matthieu.aoc.service.Extractor;
+import com.matthieu.aoc.service.Reflector;
 
 public class Resolver19p1 implements Resolver {
 	
@@ -41,7 +38,7 @@ public class Resolver19p1 implements Resolver {
 		while(!parts.isEmpty()) {
 			Part part = parts.remove(0);
 			
-			for(WCond condition: workflows.get(part.getWorkflow()).steps) {
+			for(WCond condition : workflows.get(part.getWorkflow()).steps) {
 				String result;
 				
 				if((result = condition.accept(part)) != null) {
@@ -51,6 +48,8 @@ public class Resolver19p1 implements Resolver {
 						part.setWorkflow(result);
 						this.parts.add(part);
 					}
+
+					break;
 				}
 			}
 		}
@@ -60,6 +59,7 @@ public class Resolver19p1 implements Resolver {
 
 	@Override
 	public String get() {
+		this.acceptedParts.stream().forEach(System.out::println);
 		return this.acceptedParts.stream()
 				.map(p -> Stream.of(p.x, p.m, p.a, p.s))
 				.flatMap(Function.identity())
@@ -67,6 +67,59 @@ public class Resolver19p1 implements Resolver {
 				.sum() + "";
 	}
 	
+	
+	protected List<String> simplifyWorkflowInput(final List<String> workflowsLine) {
+		List<String> result = new ArrayList<>(workflowsLine);
+		boolean inputAltered = true;
+		
+		while(inputAltered) {
+			List<String> tmp = new ArrayList<>();
+			inputAltered = false;
+			
+			for (String line : result) {
+				List<String> words = Extractor.extractWords(line);
+				String workflowName = words.remove(0);
+				
+				// Always rejected
+				if(words.stream().filter(this::keepAcceptedValue).allMatch(s -> s.equals("R"))) {
+					// Replace all occurrence of this workflow by 'R'
+					for (int i = 0; i < result.size(); i++) {
+						if(!result.get(i).substring(0, result.get(i).indexOf('{')).equals(workflowName)) {
+							tmp.add(replaceAcceptValue(result.get(i), workflowName, "R"));
+						}
+					}
+					inputAltered = true;
+					break;
+					
+				// Always Accepted
+				} else if(words.stream().filter(this::keepAcceptedValue).allMatch(s -> s.equals("A"))) {
+					// Replace all occurrence of this workflow by 'A'
+					for (int i = 0; i < result.size(); i++) {
+						if(!result.get(i).substring(0, result.get(i).indexOf('{')).equals(workflowName)) {
+							tmp.add(replaceAcceptValue(result.get(i), workflowName, "A"));
+						}
+					}
+					inputAltered = true;
+					break;
+				}
+			}
+			
+			if(inputAltered) {
+				result = tmp;
+			}
+		}
+		
+		return result;
+	}
+	
+	protected boolean keepAcceptedValue(String s) {
+		return !(s.equals("x") || s.equals("m") || s.equals("a") || s.equals("s") || !Extractor.extractNumbers(s).isEmpty());
+	}
+	
+	protected String replaceAcceptValue(String toUpdate, String toReplace, String replacement) {
+		String [] splitted = toUpdate.split("\\{");
+		return String.format("%s{%s", splitted[0], splitted[1].replaceAll(toReplace, replacement));
+	}
 	
 	protected class Workflow {
 		protected String name;
@@ -85,7 +138,13 @@ public class Resolver19p1 implements Resolver {
 				}
 			}
 		}
+
+		@Override
+		public String toString() {
+			return "Workflow [name=" + name + ", steps=" + steps + "]";
+		}
 	}
+	
 	
 	protected class WCond {
 		protected String property;
@@ -105,29 +164,16 @@ public class Resolver19p1 implements Resolver {
 				return acceptValue;
 			}
 			
-			int partValue = invokeGetter(part, property);
+			int partValue = Reflector.invokeIntGetter(part, property);
 			
-			if(this.chevron == '>' && partValue > conditionValue) {
-				return acceptValue;
-			} else if(this.chevron == '<' && partValue < conditionValue) {
+			if(this.chevron == '>' && partValue > conditionValue || 
+			   this.chevron == '<' && partValue < conditionValue) {
 				return acceptValue;
 			}
 			
 			return null;
 		}
 		
-		public int invokeGetter(Object obj, String variableName) {
-	        try {
-	            PropertyDescriptor pd = new PropertyDescriptor(variableName, obj.getClass());
-	            Method getter = pd.getReadMethod();
-	            Object f = getter.invoke(obj);
-	            return (int) f;
-	        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
-	            e.printStackTrace();
-	            return 0;
-	        }
-	    }
-
 		@Override
 		public String toString() {
 			return property != null ? property + chevron + conditionValue + ":" + acceptValue : acceptValue;
@@ -152,8 +198,6 @@ public class Resolver19p1 implements Resolver {
 			this.s = Integer.parseInt(properties[3].split("=")[1]);
 		}
 		
-		
-
 		public String getWorkflow() {
 			return workflow;
 		}
