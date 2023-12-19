@@ -1,6 +1,7 @@
 package com.matthieu.aoc.resolver.year_2023;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -16,6 +17,7 @@ public class Resolver16p1 implements Resolver {
 	protected CharMatrix map;
 	protected Matrix<List<Direction>> lights;
 	protected List<Cell<Direction>> beams;
+	protected List<Character> specialCell = Arrays.asList('\\', '/', '|', '-');
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
@@ -23,7 +25,6 @@ public class Resolver16p1 implements Resolver {
 		this.lights = new Matrix<>(map.getWidth(), map.getHeight(), () -> new ArrayList<>());
 		this.beams = new ArrayList<>();
 		this.beams.add(new Cell<>(0, 0, Direction.EAST));
-//		this.lights.get(0, 0).add(Direction.EAST);
 	}
 
 	@Override
@@ -41,9 +42,11 @@ public class Resolver16p1 implements Resolver {
 					if(map.get(beam.x(), beam.y()) == '|' && (beam.value() == Direction.EAST || beam.value() == Direction.WEST)) {
 						addBeamIfNecessary(beam.x(), beam.y(), Direction.NORTH, nextBeams);
 						addBeamIfNecessary(beam.x(), beam.y(), Direction.SOUTH, nextBeams);
+						
 					} else if(map.get(beam.x(), beam.y()) == '-' && (beam.value() == Direction.NORTH || beam.value() == Direction.SOUTH)) {
 						addBeamIfNecessary(beam.x(), beam.y(), Direction.WEST, nextBeams);
 						addBeamIfNecessary(beam.x(), beam.y(), Direction.EAST, nextBeams);
+						
 					} else if(map.get(beam.x(), beam.y()) == '\\') {
 						
 						if(beam.value() == Direction.EAST) {
@@ -101,18 +104,14 @@ public class Resolver16p1 implements Resolver {
 	}
 
 	protected void addBeamIfNecessary(int x, int y, Direction direction, List<Cell<Direction>> target) {
-		if(isNotAlreayVisitedCell(x, y, direction)) {
+		if(specialCell.contains(map.get(x, y)) || isNotAlreayVisitedCell(x, y, direction)) {
 			lights.get(x, y).add(direction);
 			target.add(new Cell<>(x, y, direction));
-			
-			List<Direction> lightsDirection = lights.get(x, y);
-			lightsDirection.add(direction);
-			lights.set(x, y, lightsDirection);
 		}
 	}
 	
 	protected boolean isNotAlreayVisitedCell(int x, int y, Direction direction) {
-		return this.lights.get(x, y).indexOf(direction) == -1;
+		return  this.lights.get(x, y).indexOf(direction) == -1;
 	}
 	
 	protected void printLights() {
