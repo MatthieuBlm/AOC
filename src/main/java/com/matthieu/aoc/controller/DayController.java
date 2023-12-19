@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,9 +39,14 @@ public class DayController {
 	@GetMapping("{year}/{dayNumber}/{partNumber}")
 	public ResponseEntity<String> resolve(@PathVariable int year, @PathVariable int dayNumber, @PathVariable int partNumber, @RequestBody(required = false) String body) throws Exception {
 		String resolverName = String.format("com.matthieu.aoc.resolver.year_%s.Resolver%sp%s", year, dayNumber, partNumber);
+		Class<?> resolverClass = null;
 		
 		// Find resolver class
-		Class<?> resolverClass = Class.forName(resolverName);
+		try {
+			resolverClass = Class.forName(resolverName);
+		} catch(ClassNotFoundException e) {
+			return new ResponseEntity<>(String.format("Resolver year %s day %s part %s not found", year, dayNumber, partNumber), HttpStatus.NOT_FOUND);
+		}
 		
 		// Create resolver instance
 		Resolver resolver = (Resolver) resolverClass.getConstructor().newInstance();
