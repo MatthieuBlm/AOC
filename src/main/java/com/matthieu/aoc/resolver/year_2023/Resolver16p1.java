@@ -17,7 +17,7 @@ public class Resolver16p1 implements Resolver {
 	protected CharMatrix map;
 	protected Matrix<List<Direction>> lights;
 	protected List<Cell<Direction>> beams;
-	protected List<Character> specialCell = Arrays.asList('\\', '/', '|', '-');
+	protected List<Character> specialCell = Arrays.asList('\\', '/');
 	
 	@Override
 	public void prepareData(List<String> values) throws PrepareDataException {
@@ -37,7 +37,7 @@ public class Resolver16p1 implements Resolver {
 				
 				if(	beam.x() >= 0 && beam.x() <= lights.getMaxX() && 
 					beam.y() >= 0 && beam.y() <= lights.getMaxY() && 
-					lights.get(beam.x(), beam.y()).indexOf(beam.value()) == -1) {
+					isNotAlreayVisitedCell(beam.x(), beam.y(), beam.value())) {
 					
 					if(map.get(beam.x(), beam.y()) == '|' && (beam.value() == Direction.EAST || beam.value() == Direction.WEST)) {
 						addBeamIfNecessary(beam.x(), beam.y(), Direction.NORTH, nextBeams);
@@ -91,8 +91,6 @@ public class Resolver16p1 implements Resolver {
 					beam.y(beam.y() - 1);
 				}
 			}
-			
-			printLights();
 		}
 		
 		return true;
@@ -100,18 +98,22 @@ public class Resolver16p1 implements Resolver {
 
 	@Override
 	public String get() {
-		return this.lights.stream().filter(Predicate.not(List::isEmpty)).count() + "";
+		return this.getEnergizedCount() + "";
+	}
+	
+	protected long getEnergizedCount() {
+		return this.lights.stream().filter(Predicate.not(List::isEmpty)).count();
 	}
 
 	protected void addBeamIfNecessary(int x, int y, Direction direction, List<Cell<Direction>> target) {
-		if(specialCell.contains(map.get(x, y)) || isNotAlreayVisitedCell(x, y, direction)) {
+		if(isNotAlreayVisitedCell(x, y, direction)) {
 			lights.get(x, y).add(direction);
 			target.add(new Cell<>(x, y, direction));
 		}
 	}
 	
 	protected boolean isNotAlreayVisitedCell(int x, int y, Direction direction) {
-		return  this.lights.get(x, y).indexOf(direction) == -1;
+		return specialCell.contains(map.get(x, y)) || this.lights.get(x, y).indexOf(direction) == -1;
 	}
 	
 	protected void printLights() {
