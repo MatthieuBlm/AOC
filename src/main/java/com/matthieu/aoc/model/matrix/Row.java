@@ -24,6 +24,14 @@ public class Row<T> {
 			this.value.add(defaultValueGetter.get());
 		}
 	}
+
+	protected Row(int lenght, int y, MatrixFunction<T> defaultValueGetter) {
+		this.value = new ArrayList<>(lenght);
+		
+		for (int x = 0; x < lenght; x++) {
+			this.value.add(defaultValueGetter.call(x, y));
+		}
+	}
 	
 	public <K> K get(int x, Parser<K> parser) {
 		return parser.parse(String.valueOf(this.get(x)));

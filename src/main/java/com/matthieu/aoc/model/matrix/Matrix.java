@@ -46,6 +46,14 @@ public class Matrix<T> {
 			this.datas.add(new Row<>(width, defaultValueGetter));
 		}
 	}
+
+	public Matrix(int width, int height, MatrixFunction<T> defaultValueGetter) {
+		this.datas = new ArrayList<>(height);
+		
+		for (int y = 0; y < height; y++) {
+			this.datas.add(new Row<>(width, y, defaultValueGetter));
+		}
+	}
 	
 
 	public T get(int x, int y) {
