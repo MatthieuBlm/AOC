@@ -23,6 +23,38 @@ public class Polygon {
 		return this.points;
 	}
 	
+	// Shoelace
+	public long getArea() {
+		long area = 0;
+		
+		for (int i = 0; i < points.size() - 1; i++) {
+			area += points.get(i).x() * points.get(i + 1).y() - points.get(i + 1).x() * points.get(i).y();
+		}
+		
+		return Math.abs(area / 2);
+	}
+	
+	public long getPerimeter() {
+		long perimeter = 0;
+		
+		for (int i = 0; i < points.size(); i++) {
+			perimeter += Math.sqrt(Math.pow(points.get(i).x() - points.get((i + 1) % points.size()).x(), 2) + Math.pow(points.get(i).y() - points.get((i + 1) % points.size()).y(), 2));
+		}
+		
+		return perimeter;
+	}
+	
+	public static void main(String[] args) {
+		Polygon p = new Polygon();
+		
+		p.addPoint(0,0);
+		p.addPoint(0,1);
+		p.addPoint(1,1);
+		p.addPoint(1,0);
+		
+		System.out.println(p.getPerimeter());
+	}
+	
 	/**
 	 * TODO May not work in every case (cf 2023, day 10 part 2)
 	 */
