@@ -28,31 +28,23 @@ public class Polygon {
 		long area = 0;
 		
 		for (int i = 0; i < points.size() - 1; i++) {
-			area += points.get(i).x() * points.get(i + 1).y() - points.get(i + 1).x() * points.get(i).y();
+			area += ((long) points.get(i).x()) * points.get(i + 1).y() - ((long) points.get(i + 1).x()) * points.get(i).y();
 		}
 		
 		return Math.abs(area / 2);
 	}
 	
-	public long getPerimeter() {
-		long perimeter = 0;
+	public double getPerimeter() {
+		double perimeter = 0;
 		
 		for (int i = 0; i < points.size(); i++) {
-			perimeter += Math.sqrt(Math.pow(points.get(i).x() - points.get((i + 1) % points.size()).x(), 2) + Math.pow(points.get(i).y() - points.get((i + 1) % points.size()).y(), 2));
+			Point a = points.get(i);
+			Point b = points.get((i + 1) % points.size()); // % to link last point with first one
+			
+			perimeter += Math.sqrt(Math.pow(((double) a.x()) - b.x(), 2) + Math.pow(((double) a.y()) - b.y(), 2));
 		}
 		
 		return perimeter;
-	}
-	
-	public static void main(String[] args) {
-		Polygon p = new Polygon();
-		
-		p.addPoint(0,0);
-		p.addPoint(0,1);
-		p.addPoint(1,1);
-		p.addPoint(1,0);
-		
-		System.out.println(p.getPerimeter());
 	}
 	
 	/**

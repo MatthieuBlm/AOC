@@ -1,5 +1,6 @@
 package com.matthieu.aoc.resolver.year_2023;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import com.matthieu.aoc.exception.PrepareDataException;
@@ -30,13 +31,13 @@ public class Resolver18p1 implements Resolver {
 		
 		for (Instruction i : instructions) {
 			
-			if(i.way == Direction.EAST) {
+			if(getInstructionWay(i) == Direction.EAST) {
 				current = new Point(current.x() + getInstructionDistance(i), current.y());
-			} else if(i.way == Direction.SOUTH) {
+			} else if(getInstructionWay(i) == Direction.SOUTH) {
 				current = new Point(current.x(), current.y() + getInstructionDistance(i));
-			} else if(i.way == Direction.WEST) {
+			} else if(getInstructionWay(i) == Direction.WEST) {
 				current = new Point(current.x() - (getInstructionDistance(i)), current.y());
-			} else if(i.way == Direction.NORTH) {
+			} else if(getInstructionWay(i) == Direction.NORTH) {
 				current = new Point(current.x(), current.y() - (getInstructionDistance(i)));
 			}
 			
@@ -48,34 +49,48 @@ public class Resolver18p1 implements Resolver {
 
 	@Override
 	public String get() {
-		polygon.getPoints().stream().forEach(System.out::println);
-		return this.polygon.getArea() + "";
+		double interior = (polygon.getArea() + 1 - (polygon.getPerimeter() / 2l));
+		
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(1);
+		
+		return df.format((interior + this.polygon.getPerimeter())) + "";
 	}
 
 	protected int getInstructionDistance(Instruction i) {
 		return i.d1;
 	}
 	
+	protected Direction getInstructionWay(Instruction i) {
+		return i.way;
+	}
+	
 	protected class Instruction {
 		protected Direction way;
+		protected Direction way2;
 		protected int d1;
 		protected int d2;
 		
 		public Instruction(List<String> values) {
 			this.d1 = Integer.parseInt(values.get(1));
-			this.d2 = Integer.parseInt(values.get(2), 16);
+			this.d2 = Integer.parseInt(values.get(2).substring(0, 5), 16);
 			
 			this.way = values.get(0).equals("R") ? Direction.EAST : 
 				values.get(0).equals("D") ? Direction.SOUTH :
 				values.get(0).equals("L") ? Direction.WEST : 
 				Direction.NORTH;
+
+			this.way2 = values.get(2).charAt(5) == '0' ? Direction.EAST :
+				values.get(2).charAt(5) == '1' ? Direction.SOUTH :
+					values.get(2).charAt(5) == '2' ? Direction.WEST : 
+						Direction.NORTH;
 		}
+		
 
 		@Override
 		public String toString() {
 			return way +" "+ d1 +" "+ d2;
 		}
-		
 		
 	}
 	
