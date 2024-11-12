@@ -8,6 +8,12 @@ import com.matthieu.aoc.model.Point3D;
 public class Brick {
 
     private List<Point3D> blocks;
+    private char name;
+    
+    public Brick(Point3D originA, Point3D originB, char name) {
+    	this(originA, originB);
+    	this.name = name;
+    }
 
     public Brick(Point3D originA, Point3D originB) {
         blocks = new ArrayList<>();
@@ -23,6 +29,10 @@ public class Brick {
 
     public List<Point3D> getBlocks() {
         return blocks;
+    }
+    
+    public char getName() {
+    	return name;
     }
 
 }
