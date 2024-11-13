@@ -8,9 +8,9 @@ import com.matthieu.aoc.model.Point3D;
 public class Brick {
 
     private List<Point3D> blocks;
-    private char name;
+    private String name;
     
-    public Brick(Point3D originA, Point3D originB, char name) {
+    public Brick(Point3D originA, Point3D originB, String name) {
     	this(originA, originB);
     	this.name = name;
     }
@@ -31,8 +31,51 @@ public class Brick {
         return blocks;
     }
     
-    public char getName() {
+    public String getName() {
     	return name;
+    }
+
+    @Override
+    public Brick clone() {
+        Brick clone = new Brick(blocks.get(0).clone(), blocks.get(blocks.size() - 1).clone());
+        clone.name = name;
+        return clone;
+    }
+
+    @Override
+    public String toString() {
+        return "Brick [" + name + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((blocks == null) ? 0 : blocks.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Brick other = (Brick) obj;
+        if (blocks == null) {
+            if (other.blocks != null)
+                return false;
+        } else if (!blocks.equals(other.blocks))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 
 }

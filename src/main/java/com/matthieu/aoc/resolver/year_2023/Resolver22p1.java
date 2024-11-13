@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.matthieu.aoc.exception.PrepareDataException;
@@ -33,7 +34,8 @@ public class Resolver22p1 implements Resolver {
             int[] originA = Stream.of(parts[0].split(",")).mapToInt(Integer::parseInt).toArray();
             int[] originB = Stream.of(parts[1].split(",")).mapToInt(Integer::parseInt).toArray();
 
-            bricks.add(new Brick(new Point3D(originA[0], originA[1], originA[2]), new Point3D(originB[0], originB[1], originB[2]), (char) (65 + i)));
+            bricks.add(new Brick(new Point3D(originA[0], originA[1], originA[2]),
+                    new Point3D(originB[0], originB[1], originB[2]), i + ""));
         }
 
         for (Brick brick : bricks) {
@@ -47,25 +49,19 @@ public class Resolver22p1 implements Resolver {
     public boolean solve() throws Exception {
     	while(fallAll(world)) {}
     	
-    	this.canBeDesintegrated = new HashSet<Brick>();
+        this.canBeDesintegrated = new HashSet<>();
     	
-    	for (int z = 1; z < MAX_HEIGHT; z++) {
-        	
-        	for (int x = 0; x <= world.getMaxX(); x++) {
-        		for (int y = 0; y <= world.getMaxY(); y++) {
-        			Matrix<List<Brick>> copy = new Matrix<>(world.getWidth(), world.getHeight(), (xc, yc) -> new ArrayList<>(world.get(xc, yc)));
-        			Brick brickToTest = copy.get(x, y).get(z);
-        			
-        			if(brickToTest != null) {
-        				desintegrate(copy, brickToTest);
-        				
-        				if(!fallAll(copy)) {
-        					this.canBeDesintegrated.add(brickToTest);
-        				}
-        			}
-        		}
-        	}
-    	}
+        bricks.forEach(brickToTest -> {
+            Matrix<List<Brick>> copy = new Matrix<>(world.getWidth(), world.getHeight(),
+                    (xc, yc) -> world.get(xc, yc).stream().map(b -> b != null ? b.clone() : null)
+                            .collect(Collectors.toCollection(ArrayList::new)));
+
+            desintegrate(copy, brickToTest);
+
+            if (!fallAll(copy)) {
+                this.canBeDesintegrated.add(brickToTest);
+            }
+        });
     	
         return true;
     }
@@ -99,8 +95,8 @@ public class Resolver22p1 implements Resolver {
     	desintegrate(world, b);
     	
     	for(Point3D block : b.getBlocks()) {
-    		world.get(block.x(), block.y()).set(block.z() - 1, b);
-    		block.setZ(block.getZ() - 1);
+            block.setZ(block.getZ() - 1);
+            world.get(block.x(), block.y()).set(block.z(), b);
     	}
     }
 
@@ -137,7 +133,7 @@ public class Resolver22p1 implements Resolver {
     		String line = "";
     		
     		for(int x = 0; x < world.getWidth(); x++) {
-    			char c = '.';
+                String c = ".";
     			
     			for(int y = 0; y < world.getHeight(); y++) {
     				Brick b = world.get(x, y).get(z);
@@ -162,7 +158,7 @@ public class Resolver22p1 implements Resolver {
     		String line = "";
     		
 			for(int y = 0; y < world.getHeight(); y++) {
-    			char c = '.';
+                String c = ".";
     			
     			for(int x = 0; x < world.getWidth(); x++) {
     				Brick b = world.get(x, y).get(z);
