@@ -35,6 +35,10 @@ public class Brick {
     	return name;
     }
 
+    public int getLowerZ() {
+        return blocks.stream().mapToInt(Point3D::getZ).min().getAsInt();
+    }
+
     @Override
     public Brick clone() {
         Brick clone = new Brick(blocks.get(0).clone(), blocks.get(blocks.size() - 1).clone());
@@ -52,7 +56,6 @@ public class Brick {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((blocks == null) ? 0 : blocks.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
@@ -69,11 +72,6 @@ public class Brick {
             if (other.blocks != null)
                 return false;
         } else if (!blocks.equals(other.blocks))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
             return false;
         return true;
     }

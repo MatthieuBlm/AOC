@@ -3,12 +3,14 @@ package com.matthieu.aoc.resolver.year_2023;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.model.Point3D;
+import com.matthieu.aoc.model.matrix.Cell;
 import com.matthieu.aoc.model.matrix.Matrix;
 import com.matthieu.aoc.model.year_2023.Brick;
 import com.matthieu.aoc.resolver.Resolver;
@@ -17,10 +19,10 @@ public class Resolver22p1 implements Resolver {
 
     private static int MAX_HEIGHT = 400;
 
-    private List<Brick> bricks;
-    private Matrix<List<Brick>> world;
+    protected List<Brick> bricks;
+    protected Matrix<List<Brick>> world;
     
-    private Set<Brick> canBeDesintegrated;
+    private List<Brick> canBeDesintegrated;
     
     @Override
     public void prepareData(List<String> values) throws PrepareDataException {
@@ -35,7 +37,7 @@ public class Resolver22p1 implements Resolver {
             int[] originB = Stream.of(parts[1].split(",")).mapToInt(Integer::parseInt).toArray();
 
             bricks.add(new Brick(new Point3D(originA[0], originA[1], originA[2]),
-                    new Point3D(originB[0], originB[1], originB[2]), i + ""));
+                    new Point3D(originB[0], originB[1], originB[2]), ((char) ((i % 78) + 48)) + ""));
         }
 
         for (Brick brick : bricks) {
@@ -47,9 +49,9 @@ public class Resolver22p1 implements Resolver {
 
     @Override
     public boolean solve() throws Exception {
-    	while(fallAll(world)) {}
-    	
-        this.canBeDesintegrated = new HashSet<>();
+        while (!fallAll(world).isEmpty()) {}
+
+        this.canBeDesintegrated = new ArrayList<>();
     	
         bricks.forEach(brickToTest -> {
             Matrix<List<Brick>> copy = new Matrix<>(world.getWidth(), world.getHeight(),
@@ -58,7 +60,8 @@ public class Resolver22p1 implements Resolver {
 
             desintegrate(copy, brickToTest);
 
-            if (!fallAll(copy)) {
+
+            if (fallAll(copy).isEmpty()) {
                 this.canBeDesintegrated.add(brickToTest);
             }
         });
@@ -71,27 +74,22 @@ public class Resolver22p1 implements Resolver {
         return this.canBeDesintegrated.size() + "";
     }
 
-    private boolean fallAll(Matrix<List<Brick>> world) {
+    protected Set<Brick> fallAll(Matrix<List<Brick>> world) {
     	boolean someBrickHasFallen = false;
-    	
-        for (int z = 2; z < MAX_HEIGHT; z++) {
-        	
-        	for (int x = 0; x <= world.getMaxX(); x++) {
-        		for (int y = 0; y <= world.getMaxY(); y++) {
-        			Brick b = world.get(x, y).get(z);
-        			
-        			if(b != null && !haveSupport(world, b)) {
-        				fall(world, b);
-        				someBrickHasFallen = true;
-        			}
-        		}
-        	}
+
+        Set<Brick> fallenBricks = new HashSet<>();
+
+        for (Brick b : getDistinctBricks(world)) {
+            if (!haveSupport(world, b)) {
+                fall(world, b);
+                fallenBricks.add(b);
+            }
         }
         
-        return someBrickHasFallen;
+        return fallenBricks;
     }
     
-    private static void fall(Matrix<List<Brick>> world, Brick b) {
+    protected static void fall(Matrix<List<Brick>> world, Brick b) {
     	desintegrate(world, b);
     	
     	for(Point3D block : b.getBlocks()) {
@@ -100,11 +98,11 @@ public class Resolver22p1 implements Resolver {
     	}
     }
 
-    private static boolean haveSupport(Matrix<List<Brick>> world,  Brick b) {
+    protected static boolean haveSupport(Matrix<List<Brick>> world, Brick b) {
     	for (Point3D block : b.getBlocks()) {
     		Brick underneathBrick = world.get(block.x(), block.y()).get(block.z() - 1);
     		
-            if (block.z() == 1 || (underneathBrick != null && underneathBrick != b)) {
+            if (block.z() == 1 || underneathBrick != null && !underneathBrick.equals(b)) {
                 return true;
             }
         }
@@ -112,13 +110,13 @@ public class Resolver22p1 implements Resolver {
         return false;
     }
     
-    private static void desintegrate(Matrix<List<Brick>> world, Brick b) {
+    protected static void desintegrate(Matrix<List<Brick>> world, Brick b) {
     	for (Point3D block : b.getBlocks()) {
     		world.get(block.x(), block.y()).set(block.z(), null);
     	}
     }
     
-    private static List<Brick> emptyList() {
+    protected static List<Brick> emptyList() {
     	ArrayList<Brick> l = new ArrayList<>();
     	
     	for(int i = 0; i < MAX_HEIGHT; i++) {
@@ -128,7 +126,7 @@ public class Resolver22p1 implements Resolver {
     	return l;
     }
     
-    private static void printXZ(Matrix<List<Brick>> world) {
+    protected static void printXZ(Matrix<List<Brick>> world) {
     	for(int z = MAX_HEIGHT - 1; z >= 0; z--) {
     		String line = "";
     		
@@ -153,7 +151,7 @@ public class Resolver22p1 implements Resolver {
     	System.out.println();
     }
     
-    private static void printYZ(Matrix<List<Brick>> world) {
+    protected static void printYZ(Matrix<List<Brick>> world) {
     	for(int z = MAX_HEIGHT - 1; z >= 0; z--) {
     		String line = "";
     		
@@ -176,5 +174,15 @@ public class Resolver22p1 implements Resolver {
     	}
     	
     	System.out.println();
+    }
+
+    protected static List<Brick> getDistinctBricks(Matrix<List<Brick>> world) {
+        return world.getCells().stream()
+                .map(Cell::value)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted((b1, b2) -> b1.getLowerZ() - b2.getLowerZ())
+                .toList();
     }
 }
