@@ -17,7 +17,7 @@ public class Resolver23p1 implements Resolver {
     protected Matrix<Long> distances;
     protected Point start;
     protected Point destination;
-    protected Map<Duo<Integer, Integer>, Character> crossableSlopes;
+    private Map<Duo<Integer, Integer>, Character> crossableSlopes;
 
     @Override
     public void prepareData(List<String> values) throws PrepareDataException {
@@ -47,7 +47,7 @@ public class Resolver23p1 implements Resolver {
     	return this.distances.get(1, 0) + "";
     }
 
-    protected void calcMaxDistanceOfNeighbourgs(int x, int y, int fromX, int fromY) {
+    private void calcMaxDistanceOfNeighbourgs(int x, int y, int fromX, int fromY) {
     	long distance = this.distances.get(x, y);
     	
     	
