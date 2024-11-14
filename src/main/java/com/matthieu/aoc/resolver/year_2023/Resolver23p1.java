@@ -1,60 +1,90 @@
 package com.matthieu.aoc.resolver.year_2023;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.matthieu.aoc.exception.PrepareDataException;
-import com.matthieu.aoc.model.graph.DijkstraSolver;
-import com.matthieu.aoc.model.graph.Node;
+import com.matthieu.aoc.model.Point;
+import com.matthieu.aoc.model.matrix.CharMatrix;
 import com.matthieu.aoc.model.matrix.Matrix;
+import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.resolver.Resolver;
 
 public class Resolver23p1 implements Resolver {
 
-    protected Matrix<Node> map;
+    protected CharMatrix map;
+    protected Matrix<Long> distances;
+    protected Point start;
+    protected Point destination;
+    protected Map<Duo<Integer, Integer>, Character> crossableSlopes;
 
     @Override
     public void prepareData(List<String> values) throws PrepareDataException {
-        this.map = new Matrix<>(values, Node::new);
+        this.map = new CharMatrix(values);
+        this.distances = new Matrix<>(this.map.getWidth(), this.map.getHeight(), () -> 0l);
+        
+        this.start = new Point(1, 0);
+        this.destination = new Point(this.map.getMaxX() - 1, this.map.getMaxY());
+        
+        this.distances.set(destination.x(), destination.y() - 1, 1l);
+
+        this.crossableSlopes = new HashMap<>();
+        this.crossableSlopes.put(new Duo<>(0, -1), 'v');
+        this.crossableSlopes.put(new Duo<>(1, 0), '<');
+        this.crossableSlopes.put(new Duo<>(0, 1), '^');
+        this.crossableSlopes.put(new Duo<>(-1, 0), '>');
     }
 
     @Override
     public boolean solve() throws Exception {
-        this.map.forEach((x, y, node) -> {
-            if (x == 0 || y == 0 || x == map.getMaxX() || y == map.getMaxY()) {
-                return;
-            }
-
-            Node upperNode = this.map.get(x, y - 1);
-            Node lowerNode = this.map.get(x, y + 1);
-            Node leftNode = this.map.get(x - 1, y);
-            Node rightNode = this.map.get(x + 1, y);
-
-            if (upperNode.getName().equals(".") || upperNode.getName().equals("^")) {
-                node.addDestination(upperNode, -1);
-            }
-            if (lowerNode.getName().equals(".") || lowerNode.getName().equals("v")) {
-                node.addDestination(lowerNode, -1);
-            }
-            if (leftNode.getName().equals(".") || leftNode.getName().equals("<")) {
-                node.addDestination(leftNode, -1);
-            }
-            if (rightNode.getName().equals(".") || rightNode.getName().equals(">")) {
-                node.addDestination(rightNode, -1);
-            }
-        });
-
-        DijkstraSolver.calculateShortestPathFromSource(map.get(0, 1));
-
+    	calcMaxDistanceOfNeighbourgs(destination.x(), destination.y() - 1, destination.x(), destination.y());
         return true;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Integer.MAX_VALUE - 1);
     }
 
     @Override
     public String get() {
-        return map.get(map.getMaxX() - 1, map.getMaxY()).getDistance() + "";
+    	return this.distances.get(1, 0) + "";
+    }
+
+    protected void calcMaxDistanceOfNeighbourgs(int x, int y, int fromX, int fromY) {
+    	long distance = this.distances.get(x, y);
+    	
+    	
+    	if(x == start.x() && y == start.y()) {
+    		return;
+    	}
+    	
+    	List<Duo<Integer, Integer>> neightbours = Matrix.getNeigthboursCrossCoords(x, y).stream()
+    			.filter(coords -> !(coords.x() == fromX && coords.y() == fromY))
+    			.toList();
+    	
+    	
+    	for (Duo<Integer, Integer> neightbour : neightbours) {
+    		char cell = map.get(neightbour.x(), neightbour.y());
+			
+    		if(cell == '.' || cell == this.crossableSlopes.get(new Duo<>(neightbour.x() - x, neightbour.y() - y))) {
+    			this.distances.set(neightbour.x(), neightbour.y(), Math.max(this.distances.get(neightbour.x(), neightbour.y()), distance + 1));
+    			calcMaxDistanceOfNeighbourgs(neightbour.x(), neightbour.y(), x, y);
+    		}
+		}
+    	
+    }
+    
+    protected void printMap() {
+    	this.map.forEach((x, y, value) -> {
+    		String toPrint = value == '#' ? "##" : pad(this.distances.get(x, y));
+    		
+    		if(x == this.map.getMaxX()) {
+    			System.out.println(toPrint);
+    		} else {
+    			System.out.print(toPrint);
+    		}
+    	});
+    }
+    
+    private static String pad(Long n) {
+    	return String.format("%1$" + 2 + "s", n).replace(' ', '0');
     }
 
 }

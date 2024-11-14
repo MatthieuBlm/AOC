@@ -54,6 +54,7 @@ public class Duo<A, B> {
 		int result = 1;
 		result = prime * result + ((a == null) ? 0 : a.hashCode());
 		result = prime * result + ((b == null) ? 0 : b.hashCode());
+		result = prime * result + ((a == null || b == null) ? 0 : a.hashCode() - b.hashCode());
 		return result;
 	}
 
