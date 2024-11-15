@@ -1,9 +1,12 @@
 package com.matthieu.aoc.resolver.year_2023;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.model.graph.Node;
+import com.matthieu.aoc.model.matrix.Cell;
 import com.matthieu.aoc.model.matrix.Matrix;
 import com.matthieu.aoc.model.tuple.Duo;
 
@@ -21,6 +24,7 @@ public class Resolver23p2 extends Resolver23p1 {
 	 
 	@Override
 	public boolean solve() throws Exception {
+        List<Node> nodes = this.graph.cellStream().map(Cell::value).filter(Objects::nonNull).toList();
 	    return true;
 	}
 	
@@ -45,19 +49,33 @@ public class Resolver23p2 extends Resolver23p1 {
                 .filter(coords -> this.map.get(coords.x(), coords.y()) != '#') // Filter walls
                 .toList();
 
-        if (neightbours.size() == 1) {
-            browseMaze(neightbours.get(0).x(), neightbours.get(0).y(), x, y, origin, distanceFromOrigin + 1);
+        // We are at the destination
+        if (graph.get(x, y) != null && graph.get(x, y).getName().equals("Destination")) {
+            linkNodes(origin, graph.get(x, y), distanceFromOrigin);
+
+        } else if (neightbours.size() == 1) {
+
+                browseMaze(neightbours.get(0).x(), neightbours.get(0).y(), x, y, origin, distanceFromOrigin + 1);
 
         } else if (neightbours.size() > 1) {
-            Node junction = new Node("Junction");
+            Node junction = Optional.ofNullable(graph.get(x, y)).orElseGet(() -> new Node("Junction"));
 
-            origin.addDestination(junction, distanceFromOrigin);
-            junction.addDestination(origin, distanceFromOrigin);
+            linkNodes(origin, junction, distanceFromOrigin);
 
-            for (Duo<Integer, Integer> neightbour : neightbours) {
-                browseMaze(neightbour.x(), neightbour.y(), x, y, junction, 1);
+            // First time we see this junction
+            if (graph.get(x, y) == null) {
+                this.graph.set(x, y, junction);
+
+                for (Duo<Integer, Integer> neightbour : neightbours) {
+                    browseMaze(neightbour.x(), neightbour.y(), x, y, junction, 1);
+                }
             }
         }
+    }
+
+    private static void linkNodes(Node a, Node b, int distance) {
+        a.addDestination(b, distance);
+        b.addDestination(a, distance);
     }
 
 }
