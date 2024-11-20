@@ -18,13 +18,14 @@ public class Resolver23p2 extends Resolver23p1 {
     private Matrix<Node> graph;
     private int junctionCounter = 1;
     private List<Node> nodes;
-    private Map<LinkedHashSet<Node>, Long> paths;
+    
+    private LinkedHashSet<Node> longestPath;
+    private long longestDistance;
 
     @Override
     public void prepareData(List<String> values) throws PrepareDataException {
         super.prepareData(values);
         this.graph = new Matrix<>(this.map.getWidth(), this.map.getHeight(), () -> null);
-        this.paths = new HashMap<>();
 
         buildGraph();
 
@@ -44,35 +45,19 @@ public class Resolver23p2 extends Resolver23p1 {
         LinkedHashSet<Node> path = new LinkedHashSet<>();
         path.add(start);
         path.add(node.getKey());
-        paths.put(path, (long) node.getValue());
 
-        browseGraph(node.getKey(), start, path);
+        browseGraph(node.getKey(), start, path, node.getValue());
 
 	    return true;
 	}
 	
     @Override
     public String get() {
-        return this.paths.values().stream().mapToLong(Long::longValue).max().orElseThrow() + "";
+    	return longestDistance + "";
     }
 	
-    private void browseGraph(Node currentNode, Node fromNode, LinkedHashSet<Node> path) {
-        if (currentNode.getAdjacentNodes().size() == 2) {
-            // Only one way to go
-            Map.Entry<Node, Integer> nextNode = currentNode.getAdjacentNodes().entrySet().stream()
-                    .filter(entry -> !entry.getKey().equals(fromNode)) // Avoid going back
-                    .findFirst()
-                    .orElseThrow();
-
-            // If not already in path
-            if (!path.contains(nextNode.getKey())) {
-
-                path.add(nextNode.getKey());
-                paths.put(path, paths.get(path) + nextNode.getValue());
-            }
-
-        } else if (currentNode.getAdjacentNodes().size() > 2) {
-
+    private void browseGraph(Node currentNode, Node fromNode, LinkedHashSet<Node> path, long distance) {
+        if (currentNode.getAdjacentNodes().size() > 2) {
             for (Map.Entry<Node, Integer> node : currentNode.getAdjacentNodes().entrySet()) {
                 if (node.getKey().equals(fromNode) || path.contains(node.getKey())) {
                     continue;
@@ -80,15 +65,18 @@ public class Resolver23p2 extends Resolver23p1 {
 
                 LinkedHashSet<Node> newPath = new LinkedHashSet<>(path);
                 newPath.add(node.getKey());
-                long distance = paths.remove(path);
-                paths.put(newPath, distance + node.getValue());
 
-                browseGraph(node.getKey(), currentNode, newPath);
+                browseGraph(node.getKey(), currentNode, newPath, distance + node.getValue());
             }
 
         } else {
-            System.out.println("End of path");
-            // TODO
+            // Arrived at destination
+        	
+        	if(longestPath == null || longestDistance < distance) {
+        		this.longestPath = path;
+        		this.longestDistance = distance;
+        		System.out.println(this.longestDistance);
+        	}
         }
 
     }
