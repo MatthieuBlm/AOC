@@ -57,6 +57,10 @@ public class Row<T> {
 		return this.value.stream();
 	}
 
+    public T remove(int index) {
+        return this.value.remove(index);
+    }
+
 	@Override
 	public String toString() {
 		return  "[" + this.value.stream().map(Objects::toString).collect(Collectors.joining(","))+ "]";
