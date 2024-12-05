@@ -59,9 +59,8 @@ public class Resolver5p1 implements Resolver {
     protected Integer isNotAtRightPlace(List<Integer> update) {
         for (int i = 0; i < update.size(); i++) {
             Integer n = update.get(i);
-            List<Duo<Integer, Integer>> relatedOrdering = getRelatedOrdering(n);
 
-            for (Duo<Integer, Integer> order : relatedOrdering) {
+            for (Duo<Integer, Integer> order : getRelatedOrdering(n)) {
                 if ((order.a() == n && isBefore(update, i, order.b()) != -1) ||
                         (order.b() == n && isAfter(update, i, order.a()) != -1)) {
                     return n;

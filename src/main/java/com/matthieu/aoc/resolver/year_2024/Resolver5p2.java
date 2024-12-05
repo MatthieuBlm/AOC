@@ -12,33 +12,33 @@ public class Resolver5p2 extends Resolver5p1 {
     public void prepareData(List<String> values) throws PrepareDataException {
         super.prepareData(values);
 
-        // Restore ordering
-        List<List<Integer>> missordered = this.updates.stream().filter(Predicate.not(this::isValidUpdate)).toList();
+        this.updates = this.updates.stream()
+                .filter(Predicate.not(this::isValidUpdate))
+                .map(this::fix)
+                .toList();
+    }
 
-        for (List<Integer> update : missordered) {
-            ErrorDescription error;
+    private List<Integer> fix(List<Integer> update) {
+        ErrorDescription error;
 
-            while ((error = this.hasError(update)) != null) {
-                swap(update, error.ia, error.ib);
-            }
+        while ((error = this.hasError(update)) != null) {
+            swap(update, error.ia, error.ib);
         }
 
-        this.updates = missordered;
+        return update;
     }
 
     private void swap(List<Integer> update, int ia, int ib) {
         Integer a = update.get(ia);
-        Integer b = update.get(ib);
-        update.set(ia, b);
+        update.set(ia, update.get(ib));
         update.set(ib, a);
     }
 
     private ErrorDescription hasError(List<Integer> update) {
         for (int i = 0; i < update.size(); i++) {
             Integer n = update.get(i);
-            List<Duo<Integer, Integer>> relatedOrdering = getRelatedOrdering(n);
 
-            for (Duo<Integer, Integer> order : relatedOrdering) {
+            for (Duo<Integer, Integer> order : getRelatedOrdering(n)) {
                 int ortherIndex = isBefore(update, i, order.b());
 
                 if (order.a() == n && ortherIndex != -1) {
