@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.matthieu.aoc.model.Point;
 import com.matthieu.aoc.model.tuple.Duo;
 import com.matthieu.aoc.service.parser.Parser;
 
@@ -62,6 +63,10 @@ public class Matrix<T> {
 		return this.datas.get(c.y()).get(c.x());
 	}
 	
+    public T get(Point position) {
+        return this.get(position.x(), position.getY());
+    }
+
 	public T getRight(int x, int y) {
 		return this.get(x + 1, y);
 	}
