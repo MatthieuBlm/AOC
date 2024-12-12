@@ -303,6 +303,10 @@ public class Matrix<T> {
 		return subMatrix;
 	}
 	
+    public boolean isOut(int x, int y) {
+        return x < 0 || y < 0 || x > this.getMaxX() || y > this.getMaxY();
+    }
+
 	public static List<Duo<Integer, Integer>> getNeigthboursCoords(int x, int y) {
 		return Arrays.asList(new Duo<>(x-1, y-1), 
 							new Duo<>(x, y-1), 
