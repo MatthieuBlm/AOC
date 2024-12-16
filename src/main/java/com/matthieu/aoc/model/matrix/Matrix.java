@@ -75,10 +75,14 @@ public class Matrix<T> {
 		return this.get(x, y + 1);
 	}
 	
-	public void set(int x, int y, T value) {
-		Duo<Integer, Integer> c = this.controlParams(x, y);
+    public void set(Point position, T value) {
+        this.set(position.x(), position.y(), value);
+    }
 
-		this.datas.get(c.y()).set(c.x(), value);
+    public void set(int x, int y, T value) {
+        Duo<Integer, Integer> c = this.controlParams(x, y);
+
+        this.datas.get(c.y()).set(c.x(), value);
 	}
 	
 	public void setRight(int x, int y, T value) {

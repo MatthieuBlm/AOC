@@ -24,9 +24,27 @@ public enum Direction {
 			return Direction.SOUTH;
 		} else if(degree == 270 || degree == -90) {
 			return Direction.WEST;
-		} else {
-			throw new IllegalArgumentException("Illegal given degree " + degree);
 		}
+
+        throw new IllegalArgumentException("Illegal given degree " + degree);
+    }
+
+    public static Direction fromVector(int x, int y) {
+        if (x == 0 && y < 0) {
+	        return Direction.NORTH;
+        } else if (x > 0 && y == 0) {
+	        return Direction.EAST;
+        } else if (x == 0 && y > 0) {
+	        return Direction.SOUTH;
+        } else if (x < 0 && y == 0) {
+	        return Direction.WEST;
+	    }
+	    
+        throw new IllegalArgumentException("Illegal given vector " + x + " " + y);
+	}
+	
+    public static Direction fromVector(Point vector) {
+        return fromVector(vector.x(), vector.y());
 	}
 	
 	public int getDegree() {
