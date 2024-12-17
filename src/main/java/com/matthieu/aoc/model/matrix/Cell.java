@@ -1,5 +1,7 @@
 package com.matthieu.aoc.model.matrix;
 
+import java.util.Objects;
+
 public class Cell<T> {
 
 	private int x;
@@ -35,6 +37,24 @@ public class Cell<T> {
 	public void value(T value) {
 		this.value = value;
 	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(value, x, y);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cell other = (Cell) obj;
+		return Objects.equals(value, other.value) && x == other.x && y == other.y;
+	}
+
 	@Override
 	public String toString() {
 		return "Cell [x=" + x + ", y=" + y + ", value=" + value + "]";
