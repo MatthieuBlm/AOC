@@ -5,15 +5,15 @@ import java.util.List;
 
 public class ComputerDay17 {
 
-    private int registerA;
-    private int registerB;
-    private int registerC;
+    private long registerA;
+    private long registerB;
+    private long registerC;
 
     private List<Integer> instructions;
 
     private int instructionPointer;
 
-    public ComputerDay17(int registerA, int registerB, int registerC, List<Integer> instructions) {
+    public ComputerDay17(long registerA, long registerB, long registerC, List<Integer> instructions) {
         this.registerA = registerA;
         this.registerB = registerB;
         this.registerC = registerC;
@@ -84,7 +84,7 @@ public class ComputerDay17 {
     }
 
     private int out() {
-        int value = getComboOperand(getLitteralOperand()) % 8;
+        int value = (int) getComboOperand(getLitteralOperand()) % 8;
         instructionPointer += 2;
         return value;
     }
@@ -107,7 +107,7 @@ public class ComputerDay17 {
         return this.instructions.get(instructionPointer + 1);
     }
 
-    private int getComboOperand(int bit) {
+    private long getComboOperand(int bit) {
         if (bit >= 0 && bit <= 3) {
             return bit;
         } else if (bit == 4) {
@@ -121,12 +121,12 @@ public class ComputerDay17 {
         throw new IllegalStateException("Recieved bit " + bit);
     }
 
-    private byte[] toByte(int i) {
-        return ByteBuffer.allocate(4).putInt(i).array();
+    private byte[] toByte(long i) {
+        return ByteBuffer.allocate(8).putLong(i).array();
     }
 
-    private int xor(int a, int b) {
-        byte[] result = new byte[4];
+    private long xor(long a, long b) {
+        byte[] result = new byte[8];
         byte[] aByte = toByte(a);
         byte[] bByte = toByte(b);
 
@@ -134,9 +134,9 @@ public class ComputerDay17 {
             result[i] = (byte) (aByte[i] ^ bByte[i]);
         }
 
-        return ByteBuffer.wrap(result).getInt();
+        return ByteBuffer.wrap(result).getLong();
     }
-
+    
     public void setInstructions(List<Integer> instructions) {
         this.instructions = instructions;
     }
@@ -149,27 +149,27 @@ public class ComputerDay17 {
         return instructions;
     }
 
-    public int getRegisterA() {
+    public long getRegisterA() {
         return registerA;
     }
 
-    public void setRegisterA(int registerA) {
+    public void setRegisterA(long registerA) {
         this.registerA = registerA;
     }
 
-    public int getRegisterB() {
+    public long getRegisterB() {
         return registerB;
     }
 
-    public void setRegisterB(int registerB) {
+    public void setRegisterB(long registerB) {
         this.registerB = registerB;
     }
 
-    public int getRegisterC() {
+    public long getRegisterC() {
         return registerC;
     }
 
-    public void setRegisterC(int registerC) {
+    public void setRegisterC(long registerC) {
         this.registerC = registerC;
     }
 

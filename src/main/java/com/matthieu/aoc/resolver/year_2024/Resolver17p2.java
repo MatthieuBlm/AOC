@@ -18,7 +18,7 @@ public class Resolver17p2 extends Resolver17p1 {
 
     private static final Logger logger = LoggerFactory.getLogger(DayController.class);
 
-    private List<Integer> goodRegisterValues;
+    private List<Long> goodRegisterValues;
     private ThreadPoolExecutor executor;
 
     @Override
@@ -32,13 +32,13 @@ public class Resolver17p2 extends Resolver17p1 {
     @Override
     public boolean solve() throws Exception {
         int batchSize = 4_000_000;
-        int maxValueBrowsed = 0;
-        List<Future<List<Integer>>> futures = new ArrayList<>();
+        long maxValueBrowsed = 3095483647l; // Already check value before this one
+        List<Future<List<Long>>> futures = new ArrayList<>();
 
         while (goodRegisterValues.isEmpty()) {
             while (executor.getQueue().size() < 12) {
-                final int fromValue = maxValueBrowsed;
-                final int toValue = maxValueBrowsed + batchSize;
+                final long fromValue = maxValueBrowsed;
+                final long toValue = maxValueBrowsed + batchSize;
                 futures.add(executor.submit(() -> search(fromValue, toValue)));
                 maxValueBrowsed = toValue;
             }
@@ -61,22 +61,20 @@ public class Resolver17p2 extends Resolver17p1 {
         return goodRegisterValues.stream().sorted().findFirst().get() + "";
     }
 
-    private List<Integer> search(int fromValue, int toValue) {
+    private List<Long> search(long fromValue, long toValue) {
         List<Integer> producedProgram = new ArrayList<>();
-        List<Integer> goodRegisterValue = new ArrayList<>();
+        List<Long> goodRegisterValue = new ArrayList<>();
         ComputerDay17 clone = new ComputerDay17(computer.getRegisterA(), computer.getRegisterB(), computer.getRegisterC(),
                 computer.getInstructions());
+        
+        logger.info("Start searching between {} and {}", fromValue, toValue);
 
         int offset = 0;
 
-        for (int i = fromValue; i < toValue; i++) {
+        for (long i = fromValue; i < toValue; i++) {
             producedProgram.clear();
             initializeClone(clone);
             clone.setRegisterA(fromValue + offset);
-
-            if (clone.getRegisterA() % 2_000_000 == 0) {
-                logger.info("Try register A {}", clone.getRegisterA());
-            }
 
             while (!clone.hasHalts()) {
                 Integer out = clone.executeInstruction();
