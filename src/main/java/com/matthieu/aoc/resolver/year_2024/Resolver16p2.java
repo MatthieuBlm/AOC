@@ -6,8 +6,8 @@ import java.util.List;
 import com.matthieu.aoc.exception.PrepareDataException;
 import com.matthieu.aoc.model.Direction;
 import com.matthieu.aoc.model.Point;
+import com.matthieu.aoc.model.matrix.CharMatrix;
 import com.matthieu.aoc.model.matrix.Matrix;
-import com.matthieu.aoc.model.tuple.Duo;
 
 public class Resolver16p2 extends Resolver16p1 {
 
@@ -27,7 +27,9 @@ public class Resolver16p2 extends Resolver16p1 {
 
         this.maze.forEachNeigthboursCross(start.x(), start.y(), (xn, yn, cn) -> {
             if (cn == '.') {
-                explore(start, new Point(xn, yn), 1, Direction.fromVector(start.x() - xn, start.y() - yn), new LinkedList<>());
+            	List<Point> path = new LinkedList<>();
+            	path.add(start);
+                explore(start, new Point(xn, yn), 1, Direction.fromVector(start.x() - xn, start.y() - yn), path);
             }
         });
 
@@ -39,29 +41,6 @@ public class Resolver16p2 extends Resolver16p1 {
         return this.bestTiles.stream().filter(b -> b.booleanValue()).count() + "";
     }
 
-    private void browse(Point current) {
-        // tileOnPath++;
-
-        if (current.equals(end)) {
-            return;
-        }
-
-        List<Duo<Integer, Integer>> neightbours = Matrix.getNeigthboursCrossCoords(current.x(), current.y());
-        final int currentDistance = this.distances.get(current);
-
-        neightbours.forEach(n -> {
-            if (maze.get(n.x(), n.y()) != '.' ||
-                    (distances.get(n.x(), n.y()) - currentDistance != -1
-                    && distances.get(n.x(), n.y()) - currentDistance != -1000
-                            && Math.abs(distances.get(n.x(), n.y()) - currentDistance) != -1001)) {
-                return;
-            }
-
-            browse(new Point(n.x(), n.y()));
-        });
-
-    }
-
     protected void explore(
             Point from,
             Point current,
@@ -69,6 +48,10 @@ public class Resolver16p2 extends Resolver16p1 {
             Direction currentDirection,
             List<Point> currentPath
     ) {
+    	if (currentDistance > minDistance) {
+    		return;
+    	}
+    	
         if (current.equals(end) && currentDistance == minDistance) {
             currentPath.stream().forEach(p -> bestTiles.set(p, Boolean.TRUE));
             return;
@@ -79,10 +62,10 @@ public class Resolver16p2 extends Resolver16p1 {
                 return;
             }
 
-            int delta = Math.abs(this.distances.get(xn, yn) - this.distances.get(current));
+            int delta = Math.abs(this.distances.get(current) - this.distances.get(xn, yn));
 
-            if (delta < 2000 && !currentPath.contains(current)) {
-                Direction nextDirection = Direction.fromVector(current.x() - xn, current.y() - yn);
+            if (delta <= 1001 && !currentPath.contains(current)) {
+                Direction nextDirection = Direction.fromVector(xn - current.x(), yn - current.y());
                 int turn = currentDirection == nextDirection ? 0 : 1;
                 List<Point> newPath = new LinkedList<>(currentPath);
                 newPath.add(current);
@@ -93,13 +76,23 @@ public class Resolver16p2 extends Resolver16p1 {
     }
 
     private String getPrintableDistance() {
-        Matrix<String> print = new Matrix<>(maze.getWidth(), maze.getHeight(), () -> "######");
+    	Matrix<String> print = new Matrix<>(maze.getWidth(), maze.getHeight(), () -> "######");
 
         this.distances.cellStream()
                 .filter(cell -> cell.value() != Integer.MAX_VALUE)
                 .forEach(cell -> print.set(cell.x(), cell.y(), String.format("|%04d|", cell.value())));
 
         return print.toString();
+    }
+    
+    private String getPrintablePath(List<Point> path) {
+    	CharMatrix print = new CharMatrix(maze.getWidth(), maze.getHeight(), maze::get);
+
+    	path.forEach(p -> {
+    		print.set(p, 'X');
+    	});
+    	
+    	return print.toString();
     }
 
 }

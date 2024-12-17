@@ -61,12 +61,12 @@ public class Resolver16p1 implements Resolver {
                 return;
             }
 
-            int distance = this.distances.get(xn, yn);
+            Direction nextDirection = Direction.fromVector(xn - current.x(), yn - current.y());
+            int turn = currentDirection == nextDirection ? 0 : 1;
+            int newNDistance = currentDistance + 1 + turn * 1000;
+            int nDistance = this.distances.get(xn, yn);
 
-            if (distance > currentDistance) {
-                Direction nextDirection = Direction.fromVector(xn - current.x(), yn - current.y());
-                int turn = currentDirection == nextDirection ? 0 : 1;
-                
+            if (newNDistance < nDistance) {
                 this.explore(current, new Point(xn, yn), currentDistance + 1 + turn * 1000, nextDirection);
             }
         });

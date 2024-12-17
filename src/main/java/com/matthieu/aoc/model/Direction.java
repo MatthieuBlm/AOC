@@ -1,15 +1,17 @@
 package com.matthieu.aoc.model;
 
 public enum Direction {
-	NORTH(0),
-	EAST(90),
-	SOUTH(180),
-	WEST(270);
+	NORTH(0, new Point(0, -1)),
+	EAST(90, new Point(1, 0)),
+	SOUTH(180, new Point(0, 1)),
+	WEST(270, new Point(-1, 0));
 	
 	private int degree;
+	private Point vector;
 	
-	private Direction(int degree) {
+	private Direction(int degree, Point vector) {
 		this.degree = degree;
+		this.vector = vector;
 	}
 	
 	public static Direction fromDegree(int degree) {
@@ -42,6 +44,20 @@ public enum Direction {
 	    
         throw new IllegalArgumentException("Illegal given vector " + x + " " + y);
 	}
+    
+    public static Direction fromCharacter(char c) {
+    	if(c == '>') {
+    		return Direction.EAST;
+    	} else if(c == 'v') {
+    		return Direction.SOUTH;
+    	} else if(c == '<') {
+    		return Direction.WEST;
+    	} else if(c == '^') {
+    		return Direction.NORTH;
+    	}
+    	
+    	throw new IllegalArgumentException("Illegal given character " + c);
+    }
 	
     public static Direction fromVector(Point vector) {
         return fromVector(vector.x(), vector.y());
@@ -49,5 +65,9 @@ public enum Direction {
 	
 	public int getDegree() {
 		return this.degree;
+	}
+	
+	public Point getVector() {
+		return this.vector;
 	}
 }
