@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Node {
@@ -15,7 +16,9 @@ public class Node {
     private Map<Node, Integer> adjacentNodes = new HashMap<>();
 
 
-    public Node() { }
+    public Node() {
+        this.name = UUID.randomUUID().toString();
+    }
 
     public Node(String name) {
         this.name = name;
@@ -60,51 +63,10 @@ public class Node {
 	}
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-
-        if (adjacentNodes != null) {
-            for (Map.Entry<Node, Integer> entry : adjacentNodes.entrySet()) {
-                result = prime * result + entry.getKey().getName().hashCode();
-                result = prime * result + entry.getValue();
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Node other = (Node) obj;
-        if (adjacentNodes == null) {
-            if (other.adjacentNodes != null)
-                return false;
-        } else if (!adjacentNodes.entrySet().stream().allMatch(entry -> other.adjacentNodes.containsKey(entry.getKey())
-                && other.adjacentNodes.get(entry.getKey()).equals(entry.getValue()))) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "Node [name=" + name + ", adjacentNodes=[" + adjacentNodes.entrySet().stream()
                 .map(entry -> "(" + entry.getKey().getName() + "," + entry.getValue() + ")").collect(Collectors.joining(", "))
                 + "]]";
     }
-    
     
 }

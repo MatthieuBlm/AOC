@@ -2,8 +2,9 @@ package com.matthieu.aoc.model.graph;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class DijkstraSolver {
 	
@@ -37,6 +38,16 @@ public class DijkstraSolver {
 	    }
 	}
 	
+    public static void resetDistances(List<Node> nodes) {
+        nodes.forEach(node -> node.setDistance(Integer.MAX_VALUE));
+    }
+    
+    public static void removeNodeFromGraph(Node node) {
+        node.getAdjacentNodes().keySet().forEach(adjacent -> {
+            adjacent.getAdjacentNodes().remove(node);
+        });
+    }
+
 	private static Node getLowestDistanceNode(Set<Node> unsettledNodes) {
 	    Node lowestDistanceNode = null;
 	    
