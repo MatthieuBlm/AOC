@@ -121,11 +121,11 @@ public class ComputerDay17 {
         throw new IllegalStateException("Recieved bit " + bit);
     }
 
-    private byte[] toByte(long i) {
+    private static byte[] toByte(long i) {
         return ByteBuffer.allocate(8).putLong(i).array();
     }
 
-    private long xor(long a, long b) {
+    private static long xor(long a, long b) {
         byte[] result = new byte[8];
         byte[] aByte = toByte(a);
         byte[] bByte = toByte(b);
@@ -136,6 +136,27 @@ public class ComputerDay17 {
 
         return ByteBuffer.wrap(result).getLong();
     }
+    
+    
+    public static void main(String[] args) {
+		long a = 0, b = 0, c = 0, out = 0;
+		
+		a = 3095483647l;
+		
+		while(a != 0) {
+			b = a % 8;
+			b = xor(b, 1);
+			c = a / (1 << b);
+			b = xor(b, c);
+			a = a / 8;
+			b = xor(b, 4);
+			out = b % 8;
+			System.out.print(out + ",");
+		}
+		
+	}
+    
+    
     
     public void setInstructions(List<Integer> instructions) {
         this.instructions = instructions;
