@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.matthieu.aoc.model.matrix.Matrix;
+
 public class DijkstraSolver {
 	
 	private DijkstraSolver() {}
@@ -45,6 +47,18 @@ public class DijkstraSolver {
     public static void removeNodeFromGraph(Node node) {
         node.getAdjacentNodes().keySet().forEach(adjacent -> {
             adjacent.getAdjacentNodes().remove(node);
+        });
+    }
+
+    public static void linkNodes(Matrix<Node> graph) {
+        graph.cellStream().forEach(cell -> {
+            if (cell.value() != null) {
+                graph.forEachNeigthboursCross(cell.x(), cell.y(), (xn, yn, cn) -> {
+                    if (cn != null) {
+                        cell.value().addDestination(cn, 1);
+                    }
+                });
+            }
         });
     }
 
