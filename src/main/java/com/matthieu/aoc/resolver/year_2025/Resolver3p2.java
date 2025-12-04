@@ -9,7 +9,7 @@ public class Resolver3p2 extends Resolver3p1 {
 	protected Long getHighestJoltage(String bank) {
 		int[][] values = new int[2][12]; //[id, highest value][i]
 		
-		for(int j = values[0][0]; j < bank.length() - 12; j++) {
+		for(int j = values[0][0]; j <= bank.length() - 12; j++) {
 			int value = Integer.parseInt(bank.substring(j, j + 1));
 			
 			if(value > values[1][0]) {
