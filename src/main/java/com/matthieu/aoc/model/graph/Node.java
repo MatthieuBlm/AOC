@@ -10,18 +10,20 @@ import java.util.stream.Collectors;
 public class Node {
 
 	private String name;
-    private List<Node> shortestPath = new LinkedList<>();
-    private Integer distance = Integer.MAX_VALUE;
+    private List<Node> shortestPath;
+    private Integer distance;
     
-    private Map<Node, Integer> adjacentNodes = new HashMap<>();
+    private Map<Node, Integer> adjacentNodes;
 
 
     public Node() {
-        this.name = UUID.randomUUID().toString();
+        this(UUID.randomUUID().toString());
     }
 
     public Node(String name) {
         this.name = name;
+        this.adjacentNodes = new HashMap<>();
+        this.initialize();
     }
 
 
@@ -29,6 +31,10 @@ public class Node {
     	adjacentNodes.put(destination, distance);
     }
     
+    public void initialize() {
+    	this.shortestPath = new LinkedList<>();
+    	this.distance = Integer.MAX_VALUE;
+    }
 
 	public String getName() {
 		return name;
